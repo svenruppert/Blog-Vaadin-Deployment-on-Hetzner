@@ -1,0 +1,28 @@
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" version="6.0" metadata-complete="false">
+    <context-param>
+        <param-name>productionMode</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Vaadin Servlet</servlet-name>
+        <servlet-class>com.svenruppert.flow.AppServlet</servlet-class>
+        <async-supported>true</async-supported>
+        <load-on-startup>1</load-on-startup>
+        <!--
+            Critical for runtime i18n — Vaadin V25's DefaultInstantiator
+            reads this init-param to discover the custom I18NProvider.
+            Without it the framework hard-instantiates DefaultI18NProvider,
+            which carries the JVM-default-locale fallback bug that makes
+            EN clicks silently return German on German machines. See
+            com.svenruppert.flow.i18n.AppI18NProvider for the full story.
+        -->
+        <init-param>
+            <param-name>i18n.provider</param-name>
+            <param-value>com.svenruppert.flow.i18n.AppI18NProvider</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Vaadin Servlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+</web-app>

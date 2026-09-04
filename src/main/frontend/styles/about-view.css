@@ -1,0 +1,204 @@
+/*
+ * Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
+ *
+ * Licensed under the EUPL, Version 1.2 (the "Licence");
+ * you may not use this file except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and
+ * limitations under the Licence.
+ */
+
+.about-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumo-space-xl);
+  width: 100%;
+  padding: 0;
+}
+
+/* ── Stat row ────────────────────────────────────────────── */
+
+.about-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lumo-space-l);
+  width: 100%;
+}
+
+.about-stat {
+  flex: 1 1 180px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--lumo-space-m);
+  border-radius: var(--app-radius-md);
+  background: var(--lumo-base-color);
+  border: 1px solid var(--lumo-contrast-10pct);
+  box-shadow: var(--app-shadow-sm);
+}
+
+.about-stat-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--app-brand-700);
+  line-height: 1;
+  margin: 0;
+}
+
+.about-stat-label {
+  font-size: var(--lumo-font-size-s);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--lumo-secondary-text-color);
+  font-weight: 600;
+  margin-top: var(--lumo-space-xs);
+}
+
+/* ── Profile card ────────────────────────────────────────── */
+
+.about-profile {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--lumo-space-l);
+  align-items: start;
+}
+
+.about-avatar-frame {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--app-radius-lg);
+  overflow: hidden;
+  background: linear-gradient(135deg,
+      var(--app-brand-300), var(--app-brand-700));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--app-shadow-md);
+  color: white;
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.about-avatar-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-profile-name {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.about-profile-role {
+  margin: 0;
+  color: var(--lumo-secondary-text-color);
+  font-weight: 500;
+}
+
+/* ── Topic badges ────────────────────────────────────────── */
+
+.about-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lumo-space-xs);
+}
+
+.about-topic {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-brand-100);
+  color: var(--app-brand-700);
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 600;
+}
+
+/* ── Outbound links ──────────────────────────────────────── */
+
+.about-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lumo-space-s);
+}
+
+.about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lumo-space-xs);
+  padding: var(--lumo-space-xs) var(--lumo-space-m);
+  border-radius: var(--app-radius-pill);
+  background: var(--lumo-base-color);
+  border: 1px solid var(--lumo-contrast-10pct);
+  text-decoration: none;
+  color: var(--lumo-body-text-color);
+  font-weight: 600;
+  transition: border-color 120ms ease, transform 120ms ease;
+}
+
+.about-link:hover {
+  border-color: var(--app-brand-300);
+  transform: translateY(-1px);
+}
+
+.about-link__imgicon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Grid + project list ─────────────────────────────────── */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--lumo-space-l);
+  width: 100%;
+}
+
+.about-feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumo-space-s);
+}
+
+.about-feature-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lumo-space-s);
+  color: var(--lumo-body-text-color);
+}
+
+.about-feature-list vaadin-icon {
+  color: var(--app-brand-600);
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+
+.about-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-l) 0;
+  border-top: 1px solid var(--lumo-contrast-10pct);
+  color: var(--lumo-tertiary-text-color);
+  font-size: var(--lumo-font-size-s);
+}

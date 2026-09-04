@@ -1,0 +1,3 @@
+com.svenruppert.flow.security.bootstrap.JCustosBootstrapInitListener
+com.svenruppert.flow.security.bootstrap.JCustosVersionInitListener
+com.svenruppert.flow.views.ui.SessionPreferencesInitListener

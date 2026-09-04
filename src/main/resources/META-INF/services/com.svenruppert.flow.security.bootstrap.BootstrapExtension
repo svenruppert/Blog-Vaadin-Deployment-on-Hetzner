@@ -1,0 +1,3 @@
+com.svenruppert.flow.security.bootstrap.DefaultBootstrapExtension
+com.svenruppert.flow.security.bootstrap.PersistenceBootstrapExtension
+com.svenruppert.flow.security.bootstrap.HardeningBootstrapExtension

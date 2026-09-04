@@ -1,0 +1,42 @@
+# Per-package mutation-coverage floors. Format: <package>=<min-percent>
+#
+# Floor values are conservative — set 2-3 points below the current
+# measurement so casual refactors don't trip the gate, but a meaningful
+# regression does. Raise a floor only after demonstrating sustained
+# coverage above it; never lower it without a written reason.
+#
+# Source of truth for "current": target/pit-reports/index.html after
+# `./mvnw -o org.pitest:pitest-maven:mutationCoverage`.
+#
+# Special line `__overall__` enforces the aggregate floor.
+#
+# Last recalibration: 2026-06-14, after wiring persistent
+# JCustosVersionStore. New packages: .i18n, .security.storage,
+# .views.ui. Overall floor lowered from 42 → 35 because the new
+# view/UI/i18n code (PushDemoView, SecurityFeaturesView,
+# LocaleSwitcher, ThemeSwitcher, BrandMark, …) added ~580 mutants
+# in UI assembly code that is intentionally light on assertions —
+# the user-facing components are exercised by BrowserlessTest visual
+# inspection, not exhaustive mutation kills. Security packages
+# still hold above 75 %.
+__overall__=35
+
+# Application/AppShell/AppServlet are entry points; intentionally
+# uncovered. Raise once a Jetty integration test exists.
+com.svenruppert.flow=0
+
+# i18n helpers: I18n facade + I18nSupport mixin + AppI18NProvider.
+# Stays at 35 because the facade's null-Vaadin-context fallback path
+# is hard to drive deterministically from BrowserlessTest.
+com.svenruppert.flow.i18n=35
+
+com.svenruppert.flow.security=95
+com.svenruppert.flow.security.bootstrap=75
+com.svenruppert.flow.security.model=83
+com.svenruppert.flow.security.permissions=95
+com.svenruppert.flow.security.roles=80
+com.svenruppert.flow.security.services=68
+com.svenruppert.flow.security.storage=95
+com.svenruppert.flow.views=22
+com.svenruppert.flow.views.main=35
+com.svenruppert.flow.views.ui=27

@@ -1,0 +1,556 @@
+/*
+ * Copyright © 2013 Sven Ruppert (sven.ruppert@gmail.com)
+ *
+ * Licensed under the EUPL, Version 1.2 (the "Licence");
+ * you may not use this file except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and
+ * limitations under the Licence.
+ */
+
+/* =========================================================================
+   Brand tokens — override these in a fork to rebrand the template.
+   ========================================================================= */
+
+html {
+  /* Brand palette. Swap the four hex values to retheme the entire app. */
+  --app-brand-50:  #f5f3ff;
+  --app-brand-100: #ede9fe;
+  --app-brand-300: #c4b5fd;
+  --app-brand-500: #7c3aed;
+  --app-brand-600: #6d28d9;
+  --app-brand-700: #5b21b6;
+
+  /* Map to Lumo's primary so framework buttons pick up the brand. */
+  --lumo-primary-color:       var(--app-brand-600);
+  --lumo-primary-color-50pct: rgba(124, 58, 237, 0.5);
+  --lumo-primary-color-10pct: rgba(124, 58, 237, 0.1);
+  --lumo-primary-text-color:  var(--app-brand-700);
+
+  /* Surface elevation tokens — softer than Lumo's defaults. */
+  --app-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04),
+                   0 1px 3px rgba(15, 23, 42, 0.06);
+  --app-shadow-md: 0 2px 4px rgba(15, 23, 42, 0.05),
+                   0 8px 24px rgba(15, 23, 42, 0.08);
+  --app-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.10),
+                   0 4px 8px rgba(15, 23, 42, 0.06);
+
+  /* Radius scale. */
+  --app-radius-sm: 6px;
+  --app-radius-md: 12px;
+  --app-radius-lg: 20px;
+  --app-radius-pill: 999px;
+
+  /* Hero gradient — deep brand → soft brand → page background. */
+  --app-hero-gradient:
+      radial-gradient(ellipse at top left,
+        var(--app-brand-100) 0%,
+        transparent 55%),
+      radial-gradient(ellipse at top right,
+        rgba(99, 102, 241, 0.12) 0%,
+        transparent 50%),
+      linear-gradient(180deg,
+        var(--app-brand-50) 0%,
+        var(--lumo-base-color) 75%);
+
+  /* Lumo typographic refinements — a hair tighter, more confident. */
+  --lumo-font-family: "Inter", "SF Pro Text", -apple-system,
+      BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --lumo-line-height-m: 1.45;
+
+  /* Promoted body color to deep slate for stronger contrast. */
+  --lumo-body-text-color: #0f172a;
+  --lumo-secondary-text-color: #475569;
+  --lumo-tertiary-text-color: #94a3b8;
+}
+
+/* =========================================================================
+   Brand mark — wordmark + icon row.
+   ========================================================================= */
+
+.app-brand-text {
+  color: var(--app-brand-700);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.app-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lumo-space-s);
+  font-size: var(--lumo-font-size-l);
+}
+
+.app-brand-mark vaadin-icon {
+  color: var(--app-brand-600);
+  width: 1.5em;
+  height: 1.5em;
+}
+
+/* =========================================================================
+   Card surface — used by dashboard tiles + feature cards + about hero.
+   ========================================================================= */
+
+.app-card {
+  background-color: var(--lumo-base-color);
+  border: 1px solid var(--lumo-contrast-10pct);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow-sm);
+  padding: var(--lumo-space-l);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.app-card-hover:hover {
+  box-shadow: var(--app-shadow-md);
+  transform: translateY(-2px);
+}
+
+.app-muted {
+  color: var(--lumo-secondary-text-color);
+  font-size: var(--lumo-font-size-s);
+}
+
+/* =========================================================================
+   Hero surface — used by PublicHomeView + SetupView "first impression".
+   ========================================================================= */
+
+.app-hero-surface {
+  background: var(--app-hero-gradient);
+  border-radius: var(--app-radius-lg);
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 5vw, 3rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.app-hero-surface::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 40%;
+  height: 80%;
+  background: radial-gradient(circle, var(--app-brand-300) 0%, transparent 70%);
+  opacity: 0.25;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.app-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lumo-space-xs);
+  padding: var(--lumo-space-xs) var(--lumo-space-s);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--lumo-contrast-10pct);
+  border-radius: var(--app-radius-pill);
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 600;
+  color: var(--app-brand-700);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.app-hero-title {
+  font-size: clamp(2rem, 5vw, 3.25rem) !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.02em !important;
+  margin: var(--lumo-space-m) 0 var(--lumo-space-s) !important;
+  max-width: 22ch;
+}
+
+.app-hero-lede {
+  font-size: var(--lumo-font-size-l);
+  line-height: 1.55;
+  max-width: 56ch;
+  color: var(--lumo-secondary-text-color);
+  margin: 0;
+}
+
+/* Hero variant — centered content, full-width title. Used on the
+   About page where the ceremonial centering reads better than the
+   default left-aligned hero. */
+.app-hero-center > div {
+  align-items: center !important;
+  text-align: center;
+}
+
+.app-hero-center .app-hero-title {
+  max-width: none;
+}
+
+.app-hero-center .app-hero-lede {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =========================================================================
+   Metric tile — dashboard.
+   ========================================================================= */
+
+.app-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumo-space-xs);
+  min-width: 0;
+}
+
+.app-tile-label {
+  color: var(--lumo-secondary-text-color);
+  font-size: var(--lumo-font-size-s);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.app-tile-value {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--lumo-body-text-color);
+}
+
+.app-tile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--app-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--app-brand-100);
+  color: var(--app-brand-700);
+}
+
+/* =========================================================================
+   Empty state — reusable across grids.
+   ========================================================================= */
+
+.app-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lumo-space-s);
+  padding: var(--lumo-space-xl) var(--lumo-space-l);
+  color: var(--lumo-secondary-text-color);
+  text-align: center;
+}
+
+.app-empty vaadin-icon {
+  width: 40px;
+  height: 40px;
+  color: var(--lumo-tertiary-text-color);
+}
+
+/* =========================================================================
+   Theme variants — applied via document.documentElement.theme attribute.
+   Lumo's native "dark" already flips the base palette; we just need to
+   re-anchor the brand tokens so app-card, app-tile-icon etc. still read
+   well on the dark surface. The "jsentinel" theme is a fully custom
+   palette evoking the upstream security project — deep blue + cyan.
+   ========================================================================= */
+
+html[theme~="dark"] {
+  --app-brand-50:  rgba(124, 58, 237, 0.10);
+  --app-brand-100: rgba(124, 58, 237, 0.18);
+  --app-brand-300: #a78bfa;
+  --app-brand-500: #8b5cf6;
+  --app-brand-600: #7c3aed;
+  --app-brand-700: #c4b5fd;
+
+  --lumo-primary-color:       var(--app-brand-500);
+  --lumo-primary-color-50pct: rgba(139, 92, 246, 0.5);
+  --lumo-primary-color-10pct: rgba(139, 92, 246, 0.15);
+  --lumo-primary-text-color:  var(--app-brand-300);
+
+  --lumo-body-text-color:      #e2e8f0;
+  --lumo-secondary-text-color: #94a3b8;
+  --lumo-tertiary-text-color:  #64748b;
+
+  --app-hero-gradient:
+      radial-gradient(ellipse at top left,
+        rgba(124, 58, 237, 0.20) 0%,
+        transparent 55%),
+      radial-gradient(ellipse at top right,
+        rgba(99, 102, 241, 0.18) 0%,
+        transparent 50%),
+      linear-gradient(180deg,
+        rgba(124, 58, 237, 0.06) 0%,
+        var(--lumo-base-color) 75%);
+}
+
+/* Same badge-readability fix as the jsentinel theme — Lumo's
+   contrast badge defaults to dark text and breaks on dark surfaces. */
+html[theme~="dark"] [theme~="badge"][theme~="contrast"] {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #f5f5f5;
+}
+
+html[theme~="dark"] [theme~="badge"][theme~="success"] {
+  background-color: rgba(124, 58, 237, 0.20);
+  color: var(--app-brand-300);
+}
+
+html[theme~="dark"] [theme~="badge"][theme~="error"] {
+  background-color: rgba(248, 113, 113, 0.20);
+  color: #fecaca;
+}
+
+html[theme~="jsentinel"] {
+  /* Aligned to jsentinel.eu dark theme: blue-tinted near-black neutrals
+     (#14151a base, #1c1e25 surfaces) with the lime-green iris accent.
+     Radial lime/pink/cyan glows mirror the site's feature-grid cards. */
+
+  /* Brand — lime ramp (matches jsentinel.eu) */
+  --app-brand-50:  rgba(163, 230, 53, 0.10);
+  --app-brand-100: rgba(163, 230, 53, 0.18);
+  --app-brand-300: #bef264;
+  --app-brand-500: #a3e635;
+  --app-brand-600: #84cc16;
+  --app-brand-700: #d9f99d;
+
+  /* Neutrals — jSentinel dark (blue-tinted near-black) */
+  --lumo-base-color:           #14151a;
+  --lumo-contrast-5pct:        rgba(255, 255, 255, 0.04);
+  --lumo-contrast-10pct:       rgba(255, 255, 255, 0.10);
+  --lumo-contrast-20pct:       rgba(255, 255, 255, 0.18);
+  --lumo-contrast-30pct:       rgba(255, 255, 255, 0.28);
+  --lumo-contrast-60pct:       rgba(255, 255, 255, 0.55);
+
+  --lumo-primary-color:        var(--app-brand-500);
+  --lumo-primary-color-50pct:  rgba(163, 230, 53, 0.5);
+  --lumo-primary-color-10pct:  rgba(163, 230, 53, 0.12);
+  --lumo-primary-text-color:   var(--app-brand-300);
+
+  --lumo-body-text-color:      #e6e6ea;
+  --lumo-secondary-text-color: #9aa0aa;
+  --lumo-tertiary-text-color:  #6b7280;
+  --lumo-header-text-color:    #ffffff;
+  --lumo-disabled-text-color:  rgba(255, 255, 255, 0.35);
+  --lumo-error-text-color:     #fca5a5;
+  --lumo-success-text-color:   var(--app-brand-300);
+
+  /* Surface tints for inputs / cards (text-field background etc.) */
+  --lumo-tint-5pct:   rgba(255, 255, 255, 0.05);
+  --lumo-tint-10pct:  rgba(255, 255, 255, 0.08);
+  --lumo-tint-20pct:  rgba(255, 255, 255, 0.14);
+  --lumo-tint:        rgba(255, 255, 255, 0.04);
+  --lumo-shade-5pct:  rgba(0, 0, 0, 0.4);
+  --lumo-shade-10pct: rgba(0, 0, 0, 0.5);
+  --lumo-shade-20pct: rgba(0, 0, 0, 0.6);
+  --lumo-shade:       rgba(0, 0, 0, 0.5);
+
+  --app-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6),
+  0 1px 3px rgba(0, 0, 0, 0.4);
+  --app-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5),
+  0 16px 32px rgba(0, 0, 0, 0.5);
+
+  --app-hero-gradient:
+          radial-gradient(ellipse at 50% 80%,
+          rgba(163, 230, 53, 0.22) 0%, transparent 55%),
+          radial-gradient(ellipse at top right,
+          rgba(236, 72, 153, 0.18) 0%, transparent 60%),
+          radial-gradient(ellipse at bottom left,
+          rgba(34, 211, 238, 0.18) 0%, transparent 55%),
+          linear-gradient(180deg, #1b1c22 0%, #14151a 75%);
+}
+
+html[theme~="jsentinel"] body {
+  background:
+          radial-gradient(circle at 10% -10%,
+          rgba(163, 230, 53, 0.08) 0%, transparent 55%),
+          radial-gradient(circle at 90% 110%,
+          rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+          #14151a;
+  color: var(--lumo-body-text-color);
+}
+
+html[theme~="jsentinel"] .app-card,
+html[theme~="jsentinel"] .app-tile,
+html[theme~="jsentinel"] .about-stat,
+html[theme~="jsentinel"] .app-locale-switcher,
+html[theme~="jsentinel"] .app-theme-switcher {
+  background: #1c1e25;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html[theme~="jsentinel"] .app-hero-surface::before {
+  background: radial-gradient(circle,
+  rgba(163, 230, 53, 0.30) 0%, transparent 70%);
+  opacity: 0.35;
+}
+
+html[theme~="jsentinel"] .about-stat-value,
+html[theme~="jsentinel"] .app-brand-text {
+  color: var(--app-brand-300);
+}
+
+html[theme~="jsentinel"] .app-tile-icon {
+  background: rgba(163, 230, 53, 0.14);
+  color: var(--app-brand-300);
+}
+
+/* Force all standard typographic elements to use the dark-theme
+   header/body colors — Lumo's shadow-DOM selectors otherwise leak
+   the default black through. */
+html[theme~="jsentinel"] h1,
+html[theme~="jsentinel"] h2,
+html[theme~="jsentinel"] h3,
+html[theme~="jsentinel"] h4,
+html[theme~="jsentinel"] h5,
+html[theme~="jsentinel"] h6 {
+  color: var(--lumo-header-text-color);
+}
+
+html[theme~="jsentinel"] p,
+html[theme~="jsentinel"] li,
+html[theme~="jsentinel"] label {
+  color: var(--lumo-body-text-color);
+}
+
+html[theme~="jsentinel"] .app-muted,
+html[theme~="jsentinel"] .app-tile-label {
+  color: var(--lumo-secondary-text-color) !important;
+}
+
+html[theme~="jsentinel"] .app-hero-eyebrow {
+  background: rgba(163, 230, 53, 0.10);
+  border-color: rgba(163, 230, 53, 0.25);
+  color: var(--app-brand-300);
+}
+
+/* Form controls — TextField, PasswordField, ComboBox, DatePicker.
+   The :host-context selector picks up the theme attribute through the
+   shadow DOM so labels, values, placeholders and helper text all read
+   light against the dark surface. */
+html[theme~="jsentinel"] vaadin-text-field,
+html[theme~="jsentinel"] vaadin-password-field,
+html[theme~="jsentinel"] vaadin-email-field,
+html[theme~="jsentinel"] vaadin-number-field,
+html[theme~="jsentinel"] vaadin-combo-box,
+html[theme~="jsentinel"] vaadin-date-picker,
+html[theme~="jsentinel"] vaadin-time-picker,
+html[theme~="jsentinel"] vaadin-multi-select-combo-box {
+  --vaadin-input-field-value-color: var(--lumo-body-text-color);
+  --vaadin-input-field-label-color: var(--lumo-secondary-text-color);
+  --vaadin-input-field-placeholder-color: var(--lumo-tertiary-text-color);
+  --vaadin-input-field-helper-color: var(--lumo-tertiary-text-color);
+  --vaadin-input-field-background: rgba(255, 255, 255, 0.04);
+}
+
+html[theme~="jsentinel"] vaadin-text-field::part(input-field),
+html[theme~="jsentinel"] vaadin-password-field::part(input-field),
+html[theme~="jsentinel"] vaadin-email-field::part(input-field),
+html[theme~="jsentinel"] vaadin-number-field::part(input-field),
+html[theme~="jsentinel"] vaadin-combo-box::part(input-field),
+html[theme~="jsentinel"] vaadin-date-picker::part(input-field),
+html[theme~="jsentinel"] vaadin-time-picker::part(input-field),
+html[theme~="jsentinel"] vaadin-multi-select-combo-box::part(input-field) {
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--lumo-body-text-color);
+}
+
+/* Notification toasts shouldn't blare white-on-white either. */
+html[theme~="jsentinel"] vaadin-notification-card {
+  background-color: #1c1e25;
+  color: var(--lumo-body-text-color);
+}
+
+/* Lumo badges are designed for a light surface — the "contrast"
+   variant especially defaults to dark text, which is unreadable on
+   the jSentinel dark card surfaces (Dashboard "Recent activity"
+   event types, SessionsView status, SecurityFeaturesView layer rows).
+   Re-anchor each badge variant to a colour pair that reads well
+   on near-black backgrounds. */
+html[theme~="jsentinel"] [theme~="badge"] {
+  color: var(--lumo-body-text-color);
+}
+
+html[theme~="jsentinel"] [theme~="badge"][theme~="contrast"] {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #f5f5f5;
+}
+
+html[theme~="jsentinel"] [theme~="badge"][theme~="success"] {
+  background-color: rgba(163, 230, 53, 0.18);
+  color: var(--app-brand-300);
+}
+
+html[theme~="jsentinel"] [theme~="badge"][theme~="error"] {
+  background-color: rgba(248, 113, 113, 0.20);
+  color: #fecaca;
+}
+
+html[theme~="jsentinel"] [theme~="badge"][theme~="primary"] {
+  background-color: rgba(163, 230, 53, 0.22);
+  color: #ecfccb;
+}
+
+/* =========================================================================
+   Locale switcher — segmented pill control in the navbar.
+   ========================================================================= */
+
+.app-locale-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--lumo-contrast-10pct);
+  border-radius: var(--app-radius-pill);
+  background-color: var(--lumo-base-color);
+  box-shadow: var(--app-shadow-sm);
+}
+
+.app-locale-switcher vaadin-button {
+  border-radius: var(--app-radius-pill) !important;
+  min-width: 38px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* =========================================================================
+   Theme switcher — same pill mechanic, icon-only buttons.
+   ========================================================================= */
+
+.app-theme-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--lumo-contrast-10pct);
+  border-radius: var(--app-radius-pill);
+  background-color: var(--lumo-base-color);
+  box-shadow: var(--app-shadow-sm);
+}
+
+.app-theme-switcher vaadin-button {
+  border-radius: var(--app-radius-pill) !important;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+}
+
+.app-theme-switcher vaadin-button vaadin-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* =========================================================================
+   Misc legacy utilities (kept for compatibility).
+   ========================================================================= */
+
+.centered-content {
+  margin: 0 auto;
+  max-width: 250px;
+}
+
+vaadin-text-field.bordered::part(input-field) {
+  box-shadow: inset 0 0 0 1px var(--lumo-contrast-30pct);
+  background-color: var(--lumo-base-color);
+}
