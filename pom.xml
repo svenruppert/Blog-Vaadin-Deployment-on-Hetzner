@@ -199,6 +199,21 @@
                     <groupId>com.vaadin</groupId>
                     <artifactId>vaadin-dev-server</artifactId>
                 </exclusion>
+                <!--
+                    Not used by this application and not reachable from any library it
+                    ships: the AI components drag in reactor-core (1.8 MB) and the
+                    collaboration engine its field highlighter. vaadin-core pulls both
+                    through vaadin-core-internal -> vaadin-core-components. Excluding
+                    them keeps the WAR to what the app actually renders.
+                -->
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-ai-components-flow</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>collaboration-engine</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -913,6 +928,19 @@
                         <exclusion>
                             <groupId>com.vaadin</groupId>
                             <artifactId>vaadin-dev</artifactId>
+                        </exclusion>
+                        <!-- Repeated from the main <dependencies>: a profile re-declaring
+                             the same artifact replaces its exclusion set rather than
+                             adding to it, so leaving these out here would let the AI
+                             components and the collaboration engine back into the
+                             production WAR. -->
+                        <exclusion>
+                            <groupId>com.vaadin</groupId>
+                            <artifactId>vaadin-ai-components-flow</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.vaadin</groupId>
+                            <artifactId>collaboration-engine</artifactId>
                         </exclusion>
                     </exclusions>
                 </dependency>
