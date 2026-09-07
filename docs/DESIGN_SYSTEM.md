@@ -1,11 +1,12 @@
 # Design system
 
-The template ships with a small, opinionated UI kit so a forked
-project starts looking like a polished product, not a Vaadin demo.
-Everything in this kit follows three principles:
+The application ships with a small, opinionated UI kit so it looks
+like a polished product, not a Vaadin demo — which matters when the
+screenshots end up in an article. Everything in this kit follows three
+principles:
 
-1. **One place to rebrand** — colors, name, tagline and icon live in
-   `TemplateBrand.java` + `styles.css`. Forking? Edit those two files.
+1. **One place for the identity** — colors, name, tagline and icon
+   live in `AppBrand.java` + `styles.css`. Nothing else carries them.
 2. **Composable, not abstract** — components are plain Vaadin Flow
    classes (`Div`, `HorizontalLayout`) wrapped in helpers. No magic,
    no DI container, no annotation processor. Use them where they
@@ -17,7 +18,7 @@ Everything in this kit follows three principles:
 ## Tokens
 
 CSS custom properties in `src/main/frontend/themes/my-theme/styles.css`.
-Refork the template ⇒ change six tokens and the whole app retheme's.
+Change six tokens and the whole app rethemes.
 
 | Token | Default | Meaning |
 |---|---|---|
@@ -35,7 +36,7 @@ your own and the whole app follows.
 
 All under `com.svenruppert.flow.views.ui`.
 
-### `TemplateBrand`
+### `AppBrand`
 
 Single source of truth: `NAME`, `TAGLINE`, `LANDING_INTRO`, `ICON`,
 plus the CSS-class constants the UI components apply. Never hardcode
@@ -109,11 +110,11 @@ Keep it out of `ui/` when:
 - It's a wrapper around exactly one Vaadin component with one extra
   CSS class — apply the class directly.
 
-## Rebrand checklist
+## Changing the identity
 
-To take this template for a new product:
+Should the application's look need to change:
 
-1. **Open `TemplateBrand.java`** — change `NAME`, `TAGLINE`,
+1. **Open `AppBrand.java`** — change `NAME`, `TAGLINE`,
    `LANDING_INTRO`, `ICON`. That's the wordmark, navbar, hero copy,
    document title, all in one shot.
 2. **Open `styles.css`** — change the `--app-brand-*` palette. Six
@@ -125,6 +126,6 @@ To take this template for a new product:
    handles itself.
 4. **Open `PublicHomeView.java`** — change the three `FeatureCard`s
    to reflect what your product ships. The hero copy already reads
-   from `TemplateBrand`.
+   from `AppBrand`.
 
 You should be able to demo the rebranded app within 30 minutes.

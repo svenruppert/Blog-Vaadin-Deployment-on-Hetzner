@@ -54,7 +54,7 @@ class AboutViewBrowserlessTest extends BrowserlessTest {
   }
 
   @Test
-  @DisplayName("hero renders the brand H1 + 'About the template' eyebrow")
+  @DisplayName("hero renders the brand H1 + 'About this application' eyebrow")
   void heroPresent() {
     navigate(AboutView.class);
 
@@ -62,9 +62,9 @@ class AboutViewBrowserlessTest extends BrowserlessTest {
     assertEquals("Crafted with Vaadin Flow", heading.getText());
 
     boolean eyebrowPresent = $view(Span.class).all().stream()
-        .anyMatch(s -> "About the template".equals(s.getText()));
+        .anyMatch(s -> "About this application".equals(s.getText()));
     assertTrue(eyebrowPresent,
-        "Hero must include an 'About the template' eyebrow");
+        "Hero must include an 'About this application' eyebrow");
   }
 
   @Test

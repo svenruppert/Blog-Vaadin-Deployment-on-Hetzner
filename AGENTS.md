@@ -4,7 +4,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Project Overview
 
-Companion repository for the *Blog - Vaadin - Deployment on Hetzner* article series. A Vaadin Flow 25.2 web application on Java 26, packaged as a WAR and deployed on Jetty 12.1. Uses `vaadin-core` (free components only, Hilla disabled). Parent POM is `com.svenruppert:dependencies:06.02.05` which provides plugin and dependency version management. **`pom.xml` is the authoritative version reference — see "Source of truth" at the end of this file.**
+Companion repository for the *Blog - Vaadin - Deployment on Hetzner* article series — the demo application the series deploys, not a template. `com.svenruppert:vaadinapp`, EUPL 1.2. A Vaadin Flow 25.2 web application on Java 26, packaged as a WAR and deployed on Jetty 12.1. Uses `vaadin-core` (free components only, Hilla disabled). Parent POM is `com.svenruppert:dependencies:06.02.05` which provides plugin and dependency version management. **`pom.xml` is the authoritative version reference — see "Source of truth" at the end of this file.**
 
 ## Origin
 
@@ -12,10 +12,17 @@ Imported from `core-vaadin-project-template` at its commit `98aca4f3` (2026-09-0
 
 Remotes: `origin` is Forgejo (`git.jsentinel.eu/sven.ruppert/Blog-Vaadin-Deployment-on-Hetzner`), `github` is the public GitHub copy. A Forgejo push mirror (`sync_on_commit`, 8 h interval) forwards to GitHub, so pushing to `origin` normally suffices — verify with `git ls-remote --heads github` if in doubt, that mirror has silently broken before.
 
+## Identity and release tagging
+
+`artifactId vaadinapp`, starting version `00.01.00`. The name matches the server side: the series deploys the service as `vaadinapp` (`/opt/vaadinapp`, `vaadinapp.service`, service account `vaadinapp`), and `<warName>ROOT</warName>` makes the build emit `target/ROOT.war` directly — the name Jetty serves from `/opt/vaadinapp/webapps/`, so no renaming step sits between build and deployment.
+
+Version scheme: `00.0N.00` for part N of the series, plus a git tag `teil-0N`, so a reader can check out the exact state an article describes and `git diff teil-01 teil-02` shows what a part changed in code.
+
+The application's brand identity — name, tagline, icon, CSS class names — lives in a single file: `views/ui/AppBrand.java`. The Java package names (`com.svenruppert.flow`) carry no template reference and stay as they are.
+
 ## Open items
 
-1. **The project identity is still the template's.** `pom.xml` carries `artifactId flow-template` plus the template's `<name>`, `<url>` and `<scm>`, so the SCM coordinates point at `core-vaadin-project-template` rather than at this repository, and `README.md` still describes the template. Decide artifactId and starting version before the first release from here. Left untouched on purpose: those are product decisions.
-2. **The mutation gate does not complete.** `-P_mutation-gate` has not finished since jCustos 00.83.00. Every PIT minion JVM pays a full Argon2id derivation at bootstrap (`BouncyCastleHashingServices.modern()` → `DefaultDummyVerificationService.<init>`), roughly 70 s of CPU per JVM. The application pays that once and still starts in under two seconds, but PIT forks one JVM per mutation unit. It needs a cheap hashing profile for mutation runs before the gate is usable again. Everything else is green: `clean verify -Pproduction` passes with 226 tests, Checkstyle 0 and SpotBugs 0.
+1. **The mutation gate does not complete.** `-P_mutation-gate` has not finished since jCustos 00.83.00. Every PIT minion JVM pays a full Argon2id derivation at bootstrap (`BouncyCastleHashingServices.modern()` → `DefaultDummyVerificationService.<init>`), roughly 70 s of CPU per JVM. The application pays that once and still starts in under two seconds, but PIT forks one JVM per mutation unit. It needs a cheap hashing profile for mutation runs before the gate is usable again. Everything else is green: `clean verify -Pproduction` passes with 226 tests, Checkstyle 0 and SpotBugs 0.
 
 ## Build & Run Commands
 
@@ -88,6 +95,7 @@ The current versions snapshot is:
 
 | Property | Value |
 |---|---|
+| Project (`com.svenruppert:vaadinapp`) | `00.01.00` |
 | Parent (`com.svenruppert:dependencies`) | `06.02.05` |
 | JDK / `maven.compiler.release` | `26` |
 | `vaadin.version` | `25.2.6` |

@@ -24,7 +24,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 
 /**
  * Feature card — icon-on-top + heading + body copy. Used on the
- * public landing hero to surface what the template ships with
+ * public landing hero to surface what the application ships with
  * (Security / Audit / Mutation-Hardened).
  *
  * <p>Surface = {@code app-card} + {@code app-card-hover}; the icon
@@ -33,7 +33,7 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 public class FeatureCard extends Div {
 
   public FeatureCard(VaadinIcon icon, String heading, String body) {
-    addClassName(TemplateBrand.CSS_CARD);
+    addClassName(AppBrand.CSS_CARD);
     addClassName("app-card-hover");
     getStyle().set("display", "flex");
     getStyle().set("flex-direction", "column");
@@ -56,7 +56,7 @@ public class FeatureCard extends Div {
     h.getStyle().set("letter-spacing", "-0.01em");
 
     Paragraph p = new Paragraph(body);
-    p.addClassName(TemplateBrand.CSS_MUTED);
+    p.addClassName(AppBrand.CSS_MUTED);
     p.getStyle().set("margin", "0");
 
     add(iconBox, h, p);

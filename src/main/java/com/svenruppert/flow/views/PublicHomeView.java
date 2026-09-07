@@ -19,7 +19,7 @@ package com.svenruppert.flow.views;
 import com.svenruppert.flow.i18n.I18nSupport;
 import com.svenruppert.flow.security.model.AppUser;
 import com.svenruppert.flow.views.ui.FeatureCard;
-import com.svenruppert.flow.views.ui.TemplateBrand;
+import com.svenruppert.flow.views.ui.AppBrand;
 import eu.jsentinel.jcustos.authorization.api.SubjectStores;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.UI;
@@ -37,14 +37,14 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 
 /**
- * Public landing page. The first impression of the template.
+ * Public landing page. The first impression of the application.
  *
  * <p>Hero with eyebrow + headline + lede + dual CTA, followed by a
- * three-card feature grid that advertises what the template ships
+ * three-card feature grid that advertises what the application ships
  * with out of the box.
  *
- * <p>Strings + icons come from {@link TemplateBrand} — rebrand the
- * fork by editing that single class.
+ * <p>Strings + icons come from {@link AppBrand} — the application's
+ * identity lives in that single class.
  */
 @Route(value = PublicHomeView.NAV, layout = MainLayout.class)
 public class PublicHomeView extends Composite<VerticalLayout>
@@ -79,16 +79,16 @@ public class PublicHomeView extends Composite<VerticalLayout>
 
   private Div buildHero() {
     Div hero = new Div();
-    hero.addClassName(TemplateBrand.CSS_HERO_SURFACE);
+    hero.addClassName(AppBrand.CSS_HERO_SURFACE);
 
     Span eyebrow = new Span(VaadinIcon.FLASH.create(),
         new Span(tr(K_EYEBROW, "Vaadin Flow • Java 25 • jCustos")));
     eyebrow.addClassName("app-hero-eyebrow");
 
-    H1 title = new H1(TemplateBrand.NAME);
+    H1 title = new H1(AppBrand.NAME);
     title.addClassName("app-hero-title");
 
-    Paragraph lede = new Paragraph(TemplateBrand.LANDING_INTRO);
+    Paragraph lede = new Paragraph(AppBrand.LANDING_INTRO);
     lede.addClassName("app-hero-lede");
 
     HorizontalLayout ctaRow = new HorizontalLayout();
@@ -127,7 +127,7 @@ public class PublicHomeView extends Composite<VerticalLayout>
   }
 
   private Button buildSecondaryCta() {
-    Button about = new Button(tr(K_CTA_ABOUT, "About this template"),
+    Button about = new Button(tr(K_CTA_ABOUT, "About this app"),
         e -> UI.getCurrent().navigate(AboutView.class));
     about.addThemeVariants(ButtonVariant.LUMO_TERTIARY, ButtonVariant.LUMO_LARGE);
     return about;

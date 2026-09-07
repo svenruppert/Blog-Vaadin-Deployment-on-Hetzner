@@ -44,7 +44,7 @@ public class MetricTile extends Div {
   }
 
   public MetricTile(VaadinIcon icon, String label, String value, String hint) {
-    addClassName(TemplateBrand.CSS_CARD);
+    addClassName(AppBrand.CSS_CARD);
     addClassName("app-card-hover");
     addClassName("app-tile");
 
@@ -72,7 +72,7 @@ public class MetricTile extends Div {
 
     if (hint != null && !hint.isBlank()) {
       Span hintSpan = new Span(hint);
-      hintSpan.addClassName(TemplateBrand.CSS_MUTED);
+      hintSpan.addClassName(AppBrand.CSS_MUTED);
       add(hintSpan);
     }
   }

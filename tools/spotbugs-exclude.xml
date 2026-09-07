@@ -12,7 +12,7 @@
       1. Finalization is disabled by default and on its way out on the JDK this
          project targets (maven.compiler.release = 26), so there is no finalizer
          left to attack.
-      2. Every view in this template is intentionally non-final — it is a
+      2. Every view in this application is intentionally non-final — it is a
          starting point meant to be subclassed. Marking the three views the
          detector happens to reach (out of ten equally non-final ones) would be
          arbitrary and would break that contract.

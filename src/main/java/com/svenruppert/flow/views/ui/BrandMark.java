@@ -23,16 +23,16 @@ import com.vaadin.flow.component.html.Span;
  * Wordmark + icon — the application's primary visual signature.
  *
  * <p>Used inside {@code MainLayout}'s navbar and on the public hero.
- * The icon and label come from {@link TemplateBrand}; rebrand by
+ * The icon and label come from {@link AppBrand}; rebrand by
  * editing that file, not this component.
  */
 public class BrandMark extends Div {
 
   public BrandMark() {
     addClassName("app-brand-mark");
-    add(TemplateBrand.ICON.create());
-    Span wordmark = new Span(TemplateBrand.NAME);
-    wordmark.addClassName(TemplateBrand.CSS_BRAND_TEXT);
+    add(AppBrand.ICON.create());
+    Span wordmark = new Span(AppBrand.NAME);
+    wordmark.addClassName(AppBrand.CSS_BRAND_TEXT);
     add(wordmark);
   }
 }

@@ -17,7 +17,7 @@
 package com.svenruppert.flow.views;
 
 import com.svenruppert.flow.i18n.I18nSupport;
-import com.svenruppert.flow.views.ui.TemplateBrand;
+import com.svenruppert.flow.views.ui.AppBrand;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Anchor;
@@ -94,13 +94,13 @@ public class AboutView extends Composite<VerticalLayout>
 
   private Div buildHero() {
     Div hero = new Div();
-    hero.addClassName(TemplateBrand.CSS_HERO_SURFACE);
+    hero.addClassName(AppBrand.CSS_HERO_SURFACE);
     // Ensure the hero surface itself spans the full width of its parent.
     hero.getStyle().set("width", "100%");
     hero.getStyle().set("box-sizing", "border-box");
 
     Span eyebrow = new Span(VaadinIcon.INFO_CIRCLE.create(),
-        new Span(tr(K_EYEBROW, "About the template")));
+        new Span(tr(K_EYEBROW, "About this application")));
     eyebrow.addClassName("app-hero-eyebrow");
 
     H1 title = new H1(tr(K_TITLE, "Crafted with Vaadin Flow"));
@@ -113,10 +113,10 @@ public class AboutView extends Composite<VerticalLayout>
     title.getStyle().set("text-align", "center");
 
     Paragraph lede = new Paragraph(tr(K_LEDE,
-        "A polished starter for product-grade Vaadin Flow applications — "
-            + "with the security, persistence and design system already "
-            + "wired in. Built by Sven Ruppert, refined over many years "
-            + "of Java craftsmanship."));
+        "The demo application of the \"Vaadin - Deployment on Hetzner\" "
+            + "article series — a Vaadin Flow application with security, "
+            + "persistence and a design system already wired in. Built by "
+            + "Sven Ruppert, refined over many years of Java craftsmanship."));
     lede.addClassName("app-hero-lede");
     lede.getStyle().set("text-align", "center");
     lede.getStyle().set("margin-left", "auto");
@@ -172,7 +172,7 @@ public class AboutView extends Composite<VerticalLayout>
 
   private Div buildProfileCard() {
     Div card = new Div();
-    card.addClassName(TemplateBrand.CSS_CARD);
+    card.addClassName(AppBrand.CSS_CARD);
     card.getStyle().set("display", "flex");
     card.getStyle().set("flex-direction", "column");
     card.getStyle().set("gap", "var(--lumo-space-m)");
@@ -205,7 +205,7 @@ public class AboutView extends Composite<VerticalLayout>
             + "more than 20 years. He speaks internationally at "
             + "conferences and has authored numerous technical articles "
             + "and books on secure coding, modern Java and DevSecOps."));
-    bio.addClassName(TemplateBrand.CSS_MUTED);
+    bio.addClassName(AppBrand.CSS_MUTED);
     bio.getStyle().set("margin", "0");
 
     Div topics = new Div();
@@ -233,7 +233,7 @@ public class AboutView extends Composite<VerticalLayout>
 
   private Div buildProjectCard() {
     Div card = new Div();
-    card.addClassName(TemplateBrand.CSS_CARD);
+    card.addClassName(AppBrand.CSS_CARD);
     card.getStyle().set("display", "flex");
     card.getStyle().set("flex-direction", "column");
     card.getStyle().set("gap", "var(--lumo-space-m)");
@@ -247,9 +247,10 @@ public class AboutView extends Composite<VerticalLayout>
     Paragraph p = new Paragraph(tr(K_PROJECT_BODY,
         "This application demonstrates clean UI composition with Flow "
             + "components, a soft visual hierarchy, accessible defaults "
-            + "and a mutation-tested security core — ready to fork for "
-            + "your next internal product."));
-    p.addClassName(TemplateBrand.CSS_MUTED);
+            + "and a mutation-tested security core. The article series "
+            + "deploys exactly this application, step by step, onto a "
+            + "Debian server at Hetzner."));
+    p.addClassName(AppBrand.CSS_MUTED);
     p.getStyle().set("margin", "0");
 
     UnorderedList list = new UnorderedList();
@@ -301,7 +302,7 @@ public class AboutView extends Composite<VerticalLayout>
     footer.addClassName("about-footer");
     footer.add(VaadinIcon.HEART.create(),
         new Span(tr(K_FOOTER,
-            "Built with Vaadin Flow & Lumo — fork it, ship it.")));
+            "Built with Vaadin Flow & Lumo — deployed on Hetzner.")));
     footer.setSizeUndefined();
     Div wrap = new Div(footer);
     wrap.getStyle().set("display", "flex");

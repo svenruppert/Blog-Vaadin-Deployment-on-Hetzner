@@ -25,7 +25,7 @@ import com.svenruppert.flow.security.services.SessionStoreProvider;
 import com.svenruppert.flow.views.ui.EmptyState;
 import com.svenruppert.flow.views.ui.MetricTile;
 import com.svenruppert.flow.views.ui.PageHeader;
-import com.svenruppert.flow.views.ui.TemplateBrand;
+import com.svenruppert.flow.views.ui.AppBrand;
 import eu.jsentinel.jcustos.audit.AuditEvent;
 import eu.jsentinel.jcustos.audit.AuditQuery;
 import eu.jsentinel.jcustos.authorization.api.JCustosServiceResolver;
@@ -164,7 +164,7 @@ public class DashboardView extends Composite<VerticalLayout>
 
   private Div buildRecentActivityCard() {
     Div card = new Div();
-    card.addClassName(TemplateBrand.CSS_CARD);
+    card.addClassName(AppBrand.CSS_CARD);
     card.getStyle().set("display", "flex");
     card.getStyle().set("flex-direction", "column");
     card.getStyle().set("gap", "var(--lumo-space-m)");
@@ -195,7 +195,7 @@ public class DashboardView extends Composite<VerticalLayout>
       Span type = new Span(event.getClass().getSimpleName());
       type.getElement().getThemeList().add("badge contrast");
       Span when = new Span(event.timestamp().toString());
-      when.addClassName(TemplateBrand.CSS_MUTED);
+      when.addClassName(AppBrand.CSS_MUTED);
       row.add(type, when);
       card.add(row);
     }

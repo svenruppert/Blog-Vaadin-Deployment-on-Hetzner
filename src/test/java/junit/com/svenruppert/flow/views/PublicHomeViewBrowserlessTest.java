@@ -56,14 +56,14 @@ class PublicHomeViewBrowserlessTest extends BrowserlessTest {
     PublicHomeView view = navigate(PublicHomeView.class);
     assertNotNull(view);
 
-    // Hero H1 mirrors the brand name — guards against TemplateBrand drift.
+    // Hero H1 mirrors the brand name — guards against AppBrand drift.
     H1 heading = $view(H1.class).first();
-    assertEquals(com.svenruppert.flow.views.ui.TemplateBrand.NAME,
+    assertEquals(com.svenruppert.flow.views.ui.AppBrand.NAME,
         heading.getText());
 
-    // Lede paragraph is the TemplateBrand intro copy.
+    // Lede paragraph is the AppBrand intro copy.
     Paragraph copy = $view(Paragraph.class).first();
-    assertEquals(com.svenruppert.flow.views.ui.TemplateBrand.LANDING_INTRO,
+    assertEquals(com.svenruppert.flow.views.ui.AppBrand.LANDING_INTRO,
         copy.getText());
 
     // The primary CTA is the first button labelled 'Sign in' anywhere

@@ -18,7 +18,7 @@ package com.svenruppert.flow.views;
 
 import com.svenruppert.flow.i18n.I18nSupport;
 import com.svenruppert.flow.views.ui.FeatureCard;
-import com.svenruppert.flow.views.ui.TemplateBrand;
+import com.svenruppert.flow.views.ui.AppBrand;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.Div;
@@ -34,9 +34,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.component.Composite;
 
 /**
- * Public surface that explains what security capabilities the template
- * ships with. Reachable without an account — every visitor (potential
- * forker, security reviewer, prospective user) can read it.
+ * Public surface that explains what security capabilities the application
+ * ships with. Reachable without an account — every visitor (article
+ * reader, security reviewer, prospective user) can read it.
  *
  * <p>Layered structure:
  * <ul>
@@ -116,7 +116,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
     content.add(buildSection(
         tr(K_S_IDENTITY_TITLE, "Identity & credentials"),
         tr(K_S_IDENTITY_SUB,
-            "How the template proves a visitor is who they claim to be."),
+            "How the application proves a visitor is who they claim to be."),
         new FeatureCard(VaadinIcon.KEY,
             tr(K_C_ARGON_T, "Argon2id hashing"),
             tr(K_C_ARGON_B,
@@ -147,7 +147,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
     content.add(buildSection(
         tr(K_S_ACCESS_TITLE, "Authorization & access"),
         tr(K_S_ACCESS_SUB,
-            "How the template decides which routes a subject may see."),
+            "How the application decides which routes a subject may see."),
         new FeatureCard(VaadinIcon.USER_CHECK,
             tr(K_C_ROLES_T, "Role + permission catalog"),
             tr(K_C_ROLES_B,
@@ -184,7 +184,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
     content.add(buildSection(
         tr(K_S_AUDIT_TITLE, "Audit & sessions"),
         tr(K_S_AUDIT_SUB,
-            "What the template records, and how an operator inspects it."),
+            "What the application records, and how an operator inspects it."),
         new FeatureCard(VaadinIcon.RECORDS,
             tr(K_C_AUDIT_T, "Persistent audit log"),
             tr(K_C_AUDIT_B,
@@ -211,7 +211,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
 
   private Div buildHero() {
     Div hero = new Div();
-    hero.addClassName(TemplateBrand.CSS_HERO_SURFACE);
+    hero.addClassName(AppBrand.CSS_HERO_SURFACE);
 
     Anchor eyebrowLink = new Anchor(JCUSTOS_URL,
         VaadinIcon.SHIELD.create(),
@@ -225,7 +225,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
     title.addClassName("app-hero-title");
 
     Paragraph lede = new Paragraph(tr(K_LEDE,
-        "The template doesn''t roll its own auth. It composes "
+        "The application doesn''t roll its own auth. It composes "
             + "jCustos — a production-grade Java security stack with "
             + "annotation-driven access control, persistent audit, drift "
             + "detection and a layered bootstrap SPI. Here''s what''s already "
@@ -259,7 +259,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
     h.getStyle().set("letter-spacing", "-0.015em");
 
     Paragraph p = new Paragraph(subtitle);
-    p.addClassName(TemplateBrand.CSS_MUTED);
+    p.addClassName(AppBrand.CSS_MUTED);
     p.getStyle().set("margin", "0");
     p.getStyle().set("max-width", "60ch");
 
@@ -276,7 +276,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
 
   private Div buildArchitectureNote() {
     Div note = new Div();
-    note.addClassName(TemplateBrand.CSS_CARD);
+    note.addClassName(AppBrand.CSS_CARD);
     note.getStyle().set("display", "flex");
     note.getStyle().set("flex-direction", "column");
     note.getStyle().set("gap", "var(--lumo-space-s)");
@@ -293,7 +293,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
             + "fourth layer (MFA, multi-tenant, …) is one new SPI "
             + "implementation + one line in services — the existing "
             + "code does not change."));
-    p.addClassName(TemplateBrand.CSS_MUTED);
+    p.addClassName(AppBrand.CSS_MUTED);
     p.getStyle().set("margin", "0");
 
     Div layers = new Div();
@@ -344,7 +344,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
 
     Span lead = new Span(tr(K_FOOTER_LEAD,
         "Want to know more about the security stack?"));
-    lead.addClassName(TemplateBrand.CSS_MUTED);
+    lead.addClassName(AppBrand.CSS_MUTED);
 
     Anchor link = new Anchor(JCUSTOS_URL,
         new Span(tr(K_FOOTER_LINK, "Visit the jCustos project")),

@@ -11,24 +11,24 @@
         <version>06.02.05</version>
     </parent>
 
-    <artifactId>flow-template</artifactId>
-    <version>00.10.00</version>
+    <artifactId>vaadinapp</artifactId>
+    <version>00.01.00</version>
     <packaging>war</packaging>
 
 
-    <inceptionYear>2023</inceptionYear>
+    <inceptionYear>2026</inceptionYear>
     <organization>
         <name>Sven Ruppert</name>
         <url>https://svenruppert.com</url>
     </organization>
 
-    <url>https://github.com/svenruppert/core-vaadin-project-template</url>
-    <name>Core Vaadin Project Template</name>
-    <description>The beginning of your OSS project</description>
+    <url>https://github.com/svenruppert/Blog-Vaadin-Deployment-on-Hetzner</url>
+    <name>Vaadin Deployment on Hetzner — Demo Application</name>
+    <description>The Vaadin Flow application deployed throughout the "Vaadin - Deployment on Hetzner" article series: WAR on Jetty behind Caddy, one tag per part.</description>
     <scm>
-        <url>https://github.com/svenruppert/core-vaadin-project-template</url>
-        <connection>scm:git:https://github.com/svenruppert/core-vaadin-project-template.git</connection>
-        <developerConnection>scm:git:https://github.com/svenruppert/core-vaadin-project-template.git
+        <url>https://github.com/svenruppert/Blog-Vaadin-Deployment-on-Hetzner</url>
+        <connection>scm:git:https://github.com/svenruppert/Blog-Vaadin-Deployment-on-Hetzner.git</connection>
+        <developerConnection>scm:git:https://github.com/svenruppert/Blog-Vaadin-Deployment-on-Hetzner.git
         </developerConnection>
         <tag>HEAD</tag>
     </scm>
@@ -45,7 +45,7 @@
     </developers>
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/svenruppert/core-vaadin-project-template/issues</url>
+        <url>https://github.com/svenruppert/Blog-Vaadin-Deployment-on-Hetzner/issues</url>
     </issueManagement>
     <licenses>
         <license>

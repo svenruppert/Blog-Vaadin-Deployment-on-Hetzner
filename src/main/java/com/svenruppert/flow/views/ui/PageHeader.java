@@ -63,7 +63,7 @@ public class PageHeader extends HorizontalLayout {
 
     if (subtitle != null && !subtitle.isBlank()) {
       Paragraph p = new Paragraph(subtitle);
-      p.addClassName(TemplateBrand.CSS_MUTED);
+      p.addClassName(AppBrand.CSS_MUTED);
       p.getStyle().set("margin", "0");
       textBlock.add(p);
     }

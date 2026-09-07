@@ -46,7 +46,7 @@ public class EmptyState extends Div {
     add(h);
     if (body != null && !body.isBlank()) {
       Paragraph p = new Paragraph(body);
-      p.addClassName(TemplateBrand.CSS_MUTED);
+      p.addClassName(AppBrand.CSS_MUTED);
       p.getStyle().set("margin", "0");
       p.getStyle().set("max-width", "44ch");
       add(p);

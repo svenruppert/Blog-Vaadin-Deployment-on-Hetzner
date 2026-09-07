@@ -17,7 +17,7 @@
 package com.svenruppert.flow.views;
 
 import com.svenruppert.flow.i18n.I18nSupport;
-import com.svenruppert.flow.views.ui.TemplateBrand;
+import com.svenruppert.flow.views.ui.AppBrand;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.AnchorTarget;
@@ -70,19 +70,19 @@ public class YoutubeView extends Composite<VerticalLayout>
 
   private Div buildHero() {
     Div hero = new Div();
-    hero.addClassName(TemplateBrand.CSS_HERO_SURFACE);
+    hero.addClassName(AppBrand.CSS_HERO_SURFACE);
 
     Span eyebrow = new Span(VaadinIcon.PLAY_CIRCLE.create(),
         new Span(tr(K_EYEBROW, "Showcase video")));
     eyebrow.addClassName("app-hero-eyebrow");
 
-    H1 title = new H1(tr(K_TITLE, "A short clip about the template"));
+    H1 title = new H1(tr(K_TITLE, "A short clip about the application"));
     title.addClassName("app-hero-title");
 
     Paragraph lede = new Paragraph(tr(K_LEDE,
-        "Replace the embedded video id in YoutubeView.VIDEO_ID with "
-            + "your own — a product walk-through, a demo, an investor "
-            + "pitch. The card scales to the iframe's aspect ratio."));
+        "The embedded video id lives in YoutubeView.VIDEO_ID. The card "
+            + "scales to the iframe's aspect ratio — a Flow view embedding "
+            + "third-party content without losing its layout."));
     lede.addClassName("app-hero-lede");
 
     Div inner = new Div(eyebrow, title, lede);
@@ -97,7 +97,7 @@ public class YoutubeView extends Composite<VerticalLayout>
 
   private Div buildPlayer() {
     Div card = new Div();
-    card.addClassName(TemplateBrand.CSS_CARD);
+    card.addClassName(AppBrand.CSS_CARD);
     card.getStyle().set("padding", "0");
     card.getStyle().set("overflow", "hidden");
     card.getStyle().set("max-width", "960px");
@@ -130,9 +130,8 @@ public class YoutubeView extends Composite<VerticalLayout>
     h.getStyle().set("font-size", "1.125rem");
 
     Paragraph body = new Paragraph(tr(K_CAPTION_BODY,
-        "A quick demonstration. Subscribe on the channel for more — "
-            + "and feel free to swap this video for your own walk-through."));
-    body.addClassName(TemplateBrand.CSS_MUTED);
+        "A quick demonstration. Subscribe on the channel for more."));
+    body.addClassName(AppBrand.CSS_MUTED);
     body.getStyle().set("margin", "0");
     body.getStyle().set("max-width", "60ch");
 

@@ -21,7 +21,7 @@ import com.svenruppert.flow.i18n.I18nSupport;
 import com.svenruppert.flow.security.bootstrap.BootstrapWiring;
 import com.svenruppert.flow.security.services.PasswordPreflight;
 import com.svenruppert.flow.views.ui.BrandMark;
-import com.svenruppert.flow.views.ui.TemplateBrand;
+import com.svenruppert.flow.views.ui.AppBrand;
 import eu.jsentinel.jcustos.bootstrap.CreateInitialAdminCommand;
 import eu.jsentinel.jcustos.bootstrap.InitialAdminCreationResult;
 import com.vaadin.flow.component.Composite;
@@ -136,7 +136,7 @@ public class SetupView extends Composite<Div>
     form.setAlignItems(FlexComponent.Alignment.STRETCH);
 
     Div hero = new Div(form);
-    hero.addClassName(TemplateBrand.CSS_HERO_SURFACE);
+    hero.addClassName(AppBrand.CSS_HERO_SURFACE);
     hero.getStyle().set("max-width", "640px");
     hero.getStyle().set("margin", "var(--lumo-space-xl) auto");
 

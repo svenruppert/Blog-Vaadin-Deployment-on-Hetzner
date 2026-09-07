@@ -1,26 +1,37 @@
-# Core Vaadin Project Template
+# Vaadin Deployment on Hetzner — Demo Application
 
-A polished Vaadin Flow 25 starter that ships with everything a serious
-internal product needs: authentication, role-based access, persistent
-storage, audit log, mutation-tested core and a design system.
+The Vaadin Flow application that the article series **„Vaadin –
+Deployment auf Hetzner"** deploys, part by part, onto a Debian server at
+Hetzner. This repository is the code side of the series; the articles
+themselves are published separately.
 
-Fork it, edit `TemplateBrand.java` plus six CSS hex values, and you're
-shipping product on top of a hardened base instead of fighting
-boilerplate.
+It is not a starter kit. It is one concrete application, carried through
+five parts, while the boundary between *application* and *environment*
+moves outward with every part.
 
-## What's in the box
+## Where the series stands
 
-| Concern | What you get | Where it lives |
+| Part | Topic | Boundary |
 |---|---|---|
-| Authentication | Username/password, role + permission catalog, drift detection | `security/{services,roles}` |
-| First-admin bootstrap | One-time-token flow, persistent token file, `/setup` view | `security/bootstrap`, `views/SetupView` |
-| Persistence | Eclipse-Store for users, sessions, audit events | `security/model/PersistentUserDirectory` |
-| Audit log | Ring buffer + persistent sink, live `/audit` grid | `views/AuditView` |
-| Session admin | Active-session inventory, revoke-on-click | `views/SessionsView` |
-| Role admin | Add/remove users + roles, version-bump-on-mutation | `views/AdminRolesView` |
-| Mutation tests | PIT + Browserless, per-package coverage floors enforced in CI | `tools/`, `src/test/.../*BrowserlessTest.java` |
-| Design system | `TemplateBrand` + theme tokens + reusable components | `views/ui/`, `frontend/themes/my-theme/styles.css` |
-| Push demo | Vaadin `@Push` example view | `views/main/PushDemoView` |
+| 0 | Preparing a Hetzner Debian server | no application yet |
+| 1 | Vaadin as a WAR on Jetty behind Caddy | the application **is** the WAR |
+| 2 | Embedded Jetty — the server becomes part of the application | Jetty moves in |
+| 3 | Vaadin Boot instead of a hand-written Jetty bootstrap | startup moves in |
+| 4 | Fat JAR or thin distribution? | packaging changes |
+| 5 | Self-contained Vaadin with jlink | the JVM moves in |
+
+## Checking out the code for one part
+
+Each part is tagged, so the exact state an article describes stays
+reproducible — and the diff between two tags shows what a part actually
+changed:
+
+```bash
+git checkout teil-01      # the state Part 1 deploys
+git diff teil-01 teil-02  # what "Jetty moves into the application" means in code
+```
+
+The project version follows the same scheme: `00.0N.00` for part N.
 
 ## Quick start
 
@@ -38,7 +49,7 @@ create the first admin.
 ```bash
 ./mvnw                                              # dev server
 ./mvnw test                                         # unit + browserless tests
-./mvnw -Pproduction package                         # production WAR
+./mvnw -Pproduction package                         # production WAR → target/ROOT.war
 ./mvnw -P_shadejar -DskipTests package              # standalone Jetty fat-jar
 ./mvnw -P_mutation-gate \
        org.pitest:pitest-maven:mutationCoverage \
@@ -46,20 +57,40 @@ create the first admin.
 ./mvnw versions:display-dependency-updates          # dependency audit
 ```
 
-## Rebranding a fork (30 minutes)
+The production build produces **`target/ROOT.war`** — the artifact name
+the server expects under `/opt/vaadinapp/webapps/`, so no renaming step
+sits between build and deployment.
 
-1. **`src/main/java/com/svenruppert/flow/views/ui/TemplateBrand.java`**
-   — change `NAME`, `TAGLINE`, `LANDING_INTRO`, `ICON`. The wordmark,
-   navbar, hero copy and document title all pull from here.
-2. **`src/main/frontend/themes/my-theme/styles.css`** — change the six
-   `--app-brand-*` hex values at the top. Lumo's `--lumo-primary-*` is
-   mapped to it, so the entire app retheme follows.
-3. **`PublicHomeView.buildFeatureGrid()`** — replace the three
-   `FeatureCard`s with what your product actually ships.
-4. **`MainLayout.buildDrawer()`** — add or remove drawer sections.
-   Role-gated visibility is automatic.
+## Deployment target
 
-Full design-system docs: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
+Part 1 puts the WAR into this shape on the server:
+
+```
+Internet → Caddy (443, TLS) → Jetty (127.0.0.1:8080) → ROOT.war
+                                    ↑
+                            systemd: vaadinapp.service
+```
+
+- **Jetty 12.1** (`ee11` branch — Vaadin 25 requires it; 12.0 does not
+  carry those modules), installed as `/opt/jetty`, base `/opt/vaadinapp`
+- **Service account** `vaadinapp`, no login shell, loopback only
+- **Configuration** outside the artifact via
+  `EnvironmentFile=-/etc/vaadinapp/environment`
+- **Secrets** via `systemd-creds` — `LoadCredentialEncrypted=`, never as
+  a process argument
+
+## What the application contributes to the articles
+
+Each chapter needs something concrete to point at. This is what the
+application supplies:
+
+| Chapter | Needs | Provided by |
+|---|---|---|
+| 4 | a real production build with frontend compilation | `-Pproduction` |
+| 14 | Vaadin Push | `@Push` in `AppShell`, `views/main/PushDemoView` |
+| 15 | a configuration value read from outside the WAR | `Application.resolve(...)` — system property, then environment variable, then default |
+| 16 | a secret | *not yet wired* — tracked as an open item |
+| 19 | visible server-side session state | login sessions, `views/SessionsView` |
 
 ## Architecture at a glance
 
@@ -75,8 +106,8 @@ src/main/java/com/svenruppert/flow/
 │   ├── permissions/          ← permission name catalog
 │   └── services/             ← auth, version-bump, password preflight
 └── views/
-    ├── ui/                   ← design system: BrandMark, PageHeader,
-    │                            MetricTile, FeatureCard, EmptyState
+    ├── ui/                   ← design system: AppBrand, BrandMark,
+    │                            PageHeader, MetricTile, FeatureCard
     ├── MainLayout.java       ← AppLayout shell, role-gated drawer
     ├── PublicHomeView.java   ← landing page (hero + features)
     ├── DashboardView.java    ← post-login metric tiles + activity
@@ -88,6 +119,11 @@ src/main/java/com/svenruppert/flow/
     ├── AboutView.java        ← about / author profile
     └── YoutubeView.java      ← embed example
 ```
+
+The application's identity — name, tagline, icon, CSS classes — lives in
+a single file: `views/ui/AppBrand.java`. Colors and spacing tokens live
+in `src/main/frontend/themes/my-theme/styles.css`. Full design-system
+docs: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
 ## Security layering — three additive layers
 
@@ -101,12 +137,13 @@ only the slice it cares about; the order is fixed by `order()`.
 | Persistence | 10 | Eclipse-Store-backed audit + session store |
 | Hardening | 20 | Argon2id hashing, drift-detection wiring |
 
-Adding a fourth layer (MFA, multi-tenant, …) is one new `BootstrapExtension`
-implementation + one line in `META-INF/services`. Nothing else changes.
+Security comes from **jCustos**, not from hand-rolled auth — which is
+why the deployment chapters can talk about sessions, audit and secrets
+without first building an authentication system.
 
 ## Mutation-coverage gate
 
-PIT mutation tests have per-package floors that CI enforces — see
+PIT mutation tests have per-package floors — see
 [`tools/README.md`](tools/README.md). Current floors:
 
 | Package | Floor |
@@ -121,36 +158,20 @@ PIT mutation tests have per-package floors that CI enforces — see
 | `views.main` | 20 % |
 | **overall** | **42 %** |
 
-A failing gate either means real regression (kill the surviving
-mutants) or that the team decided to lower a floor — both demand a
-written reason in the commit message.
+**The gate currently does not complete.** Every PIT minion JVM pays a
+full Argon2id derivation at bootstrap, and PIT forks one JVM per
+mutation unit. It needs a cheap hashing profile for mutation runs before
+it is usable again. `clean verify -Pproduction` is green.
 
-## Hardening you might want to add
+## Origin
 
-Already wired via skills, but not pre-configured here:
-
-- **HIBP password leak check** — flip a flag in the
-  hardening skill, `PasswordPreflight` queries `api.pwnedpasswords.com`
-  with k-anonymity range.
-- **Persistent JCustosVersionStore** — swap the in-memory drift
-  store for the Eclipse-Store-backed one in `META-INF/services`.
-- **Multi-tenant** — `TenantId` already threads through audit events
-  and sessions; add per-tenant storage partitioning in
-  `JCustosStorageProvider`.
+Imported from `core-vaadin-project-template` at its commit `98aca4f3`
+(2026-09-04). History starts fresh here; the template keeps its own. The
+two repositories share nothing but the content of that one import.
 
 ## Issue tracking
 
-* [GitHub Issues](https://github.com/svenruppert/core-vaadin-project-template/issues)
-* [GitHub Projects](https://github.com/svenruppert/core-vaadin-project-template/projects)
-
-## Vulnerability hunting
-
-Free scanners that integrate as GitHub PR checks — useful even for
-personal projects, since they often complement each other:
-
-* [Snyk](https://snyk.io/)
-* [OX Security](https://app.ox.security/)
-* [FaradaySec](https://faradaysec.com/)
+* [GitHub Issues](https://github.com/svenruppert/Blog-Vaadin-Deployment-on-Hetzner/issues)
 
 ## License
 
