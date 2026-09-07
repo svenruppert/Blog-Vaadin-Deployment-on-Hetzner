@@ -268,10 +268,21 @@
             <artifactId>jCustos-persistence-eclipsestore</artifactId>
             <version>${jcustos.version}</version>
         </dependency>
+        <!--
+            Embedded-Jetty launcher, used only by com.svenruppert.flow.Application
+            (the _shadejar fat-jar entry point). Same reasoning as jakarta.servlet-api
+            below: in the WAR build the container supplies Jetty, so packaging it
+            would ship a second copy of the very server the WAR runs inside — 16 jars
+            and ~3.2 MB of WEB-INF/lib, shadowed at runtime only by WebAppContext's
+            server-classes rules and therefore silently version-coupled to /opt/jetty.
+            provided keeps Application.java compiling; the _shadejar profile promotes
+            this back to compile so the fat-jar still carries its server.
+        -->
         <dependency>
             <groupId>com.svenruppert.vaadin</groupId>
             <artifactId>nano-vaadin-jetty</artifactId>
             <version>${nano-vaadin-jetty.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!--
             Vaadin 25.1.1 pulls in tools.jackson.core:jackson-databind:3.1.x transitively
@@ -707,6 +718,17 @@
                     <groupId>jakarta.servlet</groupId>
                     <artifactId>jakarta.servlet-api</artifactId>
                     <version>6.1.0</version>
+                    <scope>compile</scope>
+                </dependency>
+                <!--
+                    Same promotion for the embedded server itself: the WAR build has
+                    nano-vaadin-jetty on provided (the container supplies Jetty), but
+                    the fat-jar is its own container and must bundle the Jetty stack.
+                -->
+                <dependency>
+                    <groupId>com.svenruppert.vaadin</groupId>
+                    <artifactId>nano-vaadin-jetty</artifactId>
+                    <version>${nano-vaadin-jetty.version}</version>
                     <scope>compile</scope>
                 </dependency>
                 <!--
