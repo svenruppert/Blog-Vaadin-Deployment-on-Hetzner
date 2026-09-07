@@ -4,7 +4,18 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Project Overview
 
-Vaadin Flow 25.2 web application template using Java 26, packaged as a WAR, deployed on Jetty 12.1. Uses `vaadin-core` (free components only, Hilla disabled). Parent POM is `com.svenruppert:dependencies:06.02.05` which provides plugin and dependency version management. **`pom.xml` is the authoritative version reference — see "Source of truth" at the end of this file.**
+Companion repository for the *Blog - Vaadin - Deployment on Hetzner* article series. A Vaadin Flow 25.2 web application on Java 26, packaged as a WAR and deployed on Jetty 12.1. Uses `vaadin-core` (free components only, Hilla disabled). Parent POM is `com.svenruppert:dependencies:06.02.05` which provides plugin and dependency version management. **`pom.xml` is the authoritative version reference — see "Source of truth" at the end of this file.**
+
+## Origin
+
+Imported from `core-vaadin-project-template` at its commit `98aca4f3` (2026-09-04). History starts fresh here: `733c90c` is that import, and the template keeps its own history. The two repositories share nothing but the content of that one import — changes do not flow between them.
+
+Remotes: `origin` is Forgejo (`git.jsentinel.eu/sven.ruppert/Blog-Vaadin-Deployment-on-Hetzner`), `github` is the public GitHub copy. A Forgejo push mirror (`sync_on_commit`, 8 h interval) forwards to GitHub, so pushing to `origin` normally suffices — verify with `git ls-remote --heads github` if in doubt, that mirror has silently broken before.
+
+## Open items
+
+1. **The project identity is still the template's.** `pom.xml` carries `artifactId flow-template` plus the template's `<name>`, `<url>` and `<scm>`, so the SCM coordinates point at `core-vaadin-project-template` rather than at this repository, and `README.md` still describes the template. Decide artifactId and starting version before the first release from here. Left untouched on purpose: those are product decisions.
+2. **The mutation gate does not complete.** `-P_mutation-gate` has not finished since jCustos 00.83.00. Every PIT minion JVM pays a full Argon2id derivation at bootstrap (`BouncyCastleHashingServices.modern()` → `DefaultDummyVerificationService.<init>`), roughly 70 s of CPU per JVM. The application pays that once and still starts in under two seconds, but PIT forks one JVM per mutation unit. It needs a cheap hashing profile for mutation runs before the gate is usable again. Everything else is green: `clean verify -Pproduction` passes with 226 tests, Checkstyle 0 and SpotBugs 0.
 
 ## Build & Run Commands
 
@@ -63,7 +74,7 @@ Vaadin Flow 25.2 web application template using Java 26, packaged as a WAR, depl
 - `production` - Vaadin production frontend build with optimized bundle.
 - `_java` - Additional compiler setup with newer ASM (9.8) for Java 26 support.
 - `_shadejar` - Builds a standalone Jetty fat-jar named `application.jar` (uses nano-vaadin-jetty 04.00.00).
-- `_mutation-gate` - Runs PIT mutation coverage + `tools/pit-gate.sh` to enforce per-package floors (build fails on regression).
+- `_mutation-gate` - Runs PIT mutation coverage + `tools/pit-gate.sh` to enforce per-package floors (build fails on regression). **Currently does not complete** — see "Open items".
 
 ## Source of truth
 
