@@ -49,15 +49,16 @@ create the first admin.
 ```bash
 ./mvnw                                              # dev server
 ./mvnw test                                         # unit + browserless tests
-./mvnw -Pproduction package                         # production WAR → target/ROOT.war
-./mvnw -P_shadejar -DskipTests package              # standalone Jetty fat-jar
+./mvnw -Pproduction clean verify                    # all three modules, 226 tests
+./mvnw -Pproduction package                         # → war-jetty/target/ROOT.war
+                                                    # → embedded-jetty/target/app jar + lib/
 ./mvnw -P_mutation-gate \
        org.pitest:pitest-maven:mutationCoverage \
        verify                                       # PIT + enforce coverage floors
 ./mvnw versions:display-dependency-updates          # dependency audit
 ```
 
-The production build produces **`target/ROOT.war`** — the artifact name
+The production build produces **`war-jetty/target/ROOT.war`** — the artifact name
 the server expects under `/opt/vaadinapp/webapps/`, so no renaming step
 sits between build and deployment.
 
@@ -95,7 +96,7 @@ application supplies:
 ## Architecture at a glance
 
 ```
-src/main/java/com/svenruppert/flow/
+core/src/main/java/com/svenruppert/flow/
 ├── Application.java          ← standalone Jetty launcher (fat-jar mode)
 ├── AppShell.java             ← @Push, theme, viewport
 ├── AppServlet.java           ← VaadinServlet, error handling
@@ -122,7 +123,7 @@ src/main/java/com/svenruppert/flow/
 
 The application's identity — name, tagline, icon, CSS classes — lives in
 a single file: `views/ui/AppBrand.java`. Colors and spacing tokens live
-in `src/main/frontend/themes/my-theme/styles.css`. Full design-system
+in `core/src/main/frontend/themes/my-theme/styles.css`. Full design-system
 docs: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).
 
 ## Security layering — three additive layers
