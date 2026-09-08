@@ -41,6 +41,22 @@
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!--
+            The logging binding is a delivery decision, so each packaging module
+            names it. It has to be declared here and not just inherited: the
+            grandparent POM carries slf4j-simple as a direct test-scope
+            dependency, and a direct declaration beats the compile-scope one
+            that arrives transitively from core. Without this the packaged
+            application finds no SLF4J provider, falls back to the NOP logger
+            and starts up completely silent - which hides every later error.
+        -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-api.version}</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

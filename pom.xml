@@ -233,6 +233,28 @@
                 <version>6.1.0</version>
             </dependency>
 
+            <!--
+                Pin the SLF4J family. Without this log4j-over-slf4j drifts to
+                2.0.17 in the packaging modules through transitive mediation,
+                while core resolves 2.1.0-alpha1 - two versions of the same
+                bridge in one reactor.
+            -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>

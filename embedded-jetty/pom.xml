@@ -52,6 +52,22 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--
+            The logging binding is a delivery decision, so each packaging module
+            names it. It has to be declared here and not just inherited: the
+            grandparent POM carries slf4j-simple as a direct test-scope
+            dependency, and a direct declaration beats the compile-scope one
+            that arrives transitively from core. Without this the packaged
+            application finds no SLF4J provider, falls back to the NOP logger
+            and starts up completely silent - which hides every later error.
+        -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-api.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- The server itself, versions from the Jetty BOMs in the reactor. -->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -104,6 +120,34 @@
 
     <build>
         <plugins>
+            <!--
+                The delivery form of part 3: the application jar next to a lib/
+                directory holding its dependencies. Deliberately not a fat jar -
+                packaging is the subject of part 5, and starting from a plain
+                classpath is what makes the difference visible there.
+
+                    java -cp 'vaadinapp-embedded-jetty-<version>.jar:lib/*' \
+                         com.svenruppert.flow.Application
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>collect-libraries</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -111,6 +155,31 @@
                     <archive>
                         <manifest>
                             <mainClass>com.svenruppert.flow.Application</mainClass>
+                            <!--
+                                Deliberately no addClasspath/classpathPrefix, and
+                                therefore no `java -jar` start.
+
+                                A manifest Class-Path would make `java -jar` appear
+                                to work: the application classloader does resolve the
+                                listed jars, so classes load and the server comes up.
+                                But java.class.path then contains a single entry - the
+                                application jar - and that property is what Jetty's
+                                MetaInfConfiguration reads to decide which archives to
+                                scan. The annotation scan therefore finds nothing,
+                                Vaadin's RouteRegistryInitializer never runs, and the
+                                servlet ends up without a StaticFileHandler. The server
+                                answers, every request fails with a NullPointerException,
+                                and startup takes 139 ms instead of several seconds -
+                                the only visible hint that no scanning happened.
+
+                                Measured: identical set of 127 archives, `-cp` serves
+                                HTTP 200, `-jar` fails on every route.
+
+                                The delivery form is therefore an explicit classpath:
+
+                                    java -cp 'vaadinapp-embedded-jetty-<version>.jar:lib/*' \
+                                         com.svenruppert.flow.Application
+                            -->
                         </manifest>
                     </archive>
                 </configuration>
