@@ -36,11 +36,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
-/src/main/frontend/generated/
-/src/main/bundles/
+core/src/main/frontend/generated/
+core/src/main/bundles/
 
 ### jCustos persistence — Eclipse-Store data dir, bootstrap token ###
 /data/
-/node_modules/
+core/node_modules/
 /.claude/
 /.idea/

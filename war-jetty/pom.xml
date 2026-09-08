@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.svenruppert</groupId>
+        <artifactId>vaadinapp</artifactId>
+        <version>00.01.00</version>
+    </parent>
+
+    <artifactId>vaadinapp-war-jetty</artifactId>
+    <packaging>war</packaging>
+    <name>Vaadin Deployment on Hetzner — WAR for an external Jetty</name>
+
+    <!--
+        The delivery form of article parts 1 and 2: a WAR handed to a Jetty that
+        somebody installed and maintains separately.
+
+        This module holds no Java code at all. Everything it needs comes from
+        vaadinapp-core; what remains here is the web.xml that maps the servlet
+        and, above all, sets the i18n.provider init parameter - without it Vaadin
+        falls back to DefaultI18NProvider and the locale switcher silently stops
+        working.
+
+        The artifact is called ROOT.war because Jetty derives the context path
+        from the archive name: ROOT.war is served at /. The name is part of the
+        deployment contract on the server (/opt/vaadinapp/webapps/ROOT.war), so
+        no renaming step sits between build and deployment.
+    -->
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>vaadinapp-core</artifactId>
+        </dependency>
+        <!-- Supplied by the container at runtime, never packaged. -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!--
+            run-war rather than run: this module has no sources of its own, so
+            the in-place runner would serve an empty context. run-war starts the
+            packaged archive and therefore reflects what actually ships.
+        -->
+        <defaultGoal>jetty:run-war</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <warName>${warName}</warName>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <configuration>
+                    <scan>2</scan>
+                    <webApp>
+                        <allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
+                    </webApp>
+                </configuration>
+                <!--
+                    Force SLF4J 2.x onto the plugin's classloader. Jetty 12.1 internals
+                    call Logger.atDebug() (only exists in SLF4J 2.0+), but transitive
+                    Maven plugin deps still drag in slf4j-api 1.7.36, which otherwise
+                    wins at @Push teardown with a NoSuchMethodError.
+                -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                        <version>${slf4j-api.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                        <version>${slf4j-api.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>

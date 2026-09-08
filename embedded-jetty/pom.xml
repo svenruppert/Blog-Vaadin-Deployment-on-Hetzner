@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.svenruppert</groupId>
+        <artifactId>vaadinapp</artifactId>
+        <version>00.01.00</version>
+    </parent>
+
+    <artifactId>vaadinapp-embedded-jetty</artifactId>
+    <packaging>jar</packaging>
+    <name>Vaadin Deployment on Hetzner — embedded Jetty</name>
+
+    <!--
+        The delivery form of article part 3: the application brings its own
+        server. There is no installed Jetty any more, no JETTY_HOME, no module
+        mechanism - just a main() that assembles Server, connector and context.
+
+        What the module mechanism used to do now has to be written down, and the
+        two things that fail *silently* when it is not are:
+
+          - ForwardedRequestCustomizer. Behind Caddy the request arrives from
+            127.0.0.1 over plain HTTP. Without the customizer the application
+            concludes it is not on HTTPS and drops the Secure flag from the
+            session cookie.
+          - The websocket container. Vaadin Push needs it; without it the
+            connection quietly degrades.
+
+        Packaging is jar. In the single-module layout an embedded launcher had to
+        be squeezed out of a war build through the _shadejar profile, which set
+        the war execution to phase none and shaded a separate jar. None of that
+        is needed here. How this jar is then wrapped - fat jar or thin
+        distribution - is the subject of part 5.
+    -->
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>vaadinapp-core</artifactId>
+        </dependency>
+
+        <!--
+            Not provided here, unlike in the WAR: this module IS the container,
+            so the Servlet API has to be on its runtime classpath.
+        -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- The server itself, versions from the Jetty BOMs in the reactor. -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-webapp</artifactId>
+        </dependency>
+        <!--
+            Supplies the annotation scanner. Vaadin finds its @Route classes
+            through RouteRegistryInitializer, a ServletContainerInitializer
+            discovered via META-INF/services - which is exactly what this
+            scanner walks.
+        -->
+        <dependency>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-annotations</artifactId>
+        </dependency>
+        <!-- Vaadin Push. The external Jetty got this from ee11-websocket-jakarta. -->
+        <dependency>
+            <groupId>org.eclipse.jetty.ee11.websocket</groupId>
+            <artifactId>jetty-ee11-websocket-jakarta-server</artifactId>
+        </dependency>
+
+        <!--
+            Pin all four ASM modules to one version that understands Java-26
+            bytecode. Default resolution mixes asm 9.8 (via j2objc-annotations)
+            with asm-tree/asm-commons 9.9.1 (via Jetty); that mix aborts the
+            annotation scan with "Unsupported class file major version 70" and
+            the WebAppContext never starts. Versions come from the reactor.
+        -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-tree</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-analysis</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.svenruppert.flow.Application</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

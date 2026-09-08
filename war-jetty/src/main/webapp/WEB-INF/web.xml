@@ -1,8 +1,12 @@
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" version="6.0" metadata-complete="false">
-    <context-param>
-        <param-name>productionMode</param-name>
-        <param-value>true</param-value>
-    </context-param>
+    <!--
+        No productionMode context-param on purpose. Vaadin derives the mode from
+        META-INF/VAADIN/config/flow-build-info.json, which build-frontend writes
+        into the core module's jar. Since build-frontend now runs only under
+        -Pproduction, hard-coding the flag here would claim a production bundle
+        that a plain `mvn package` has not built — the application would start
+        and serve a blank page.
+    -->
     <servlet>
         <servlet-name>Vaadin Servlet</servlet-name>
         <servlet-class>com.svenruppert.flow.AppServlet</servlet-class>
