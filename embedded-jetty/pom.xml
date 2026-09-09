@@ -332,6 +332,41 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!--
+                        The fat jar as a release with the same shape as the thin
+                        one: bin/, app/, VERSION, no lib/. The start script is byte
+                        for byte the same file, so the systemd unit does not change
+                        between the two forms and switching from one to the other is
+                        a symlink plus a restart. That is what makes them comparable.
+
+                        It works because start.sh puts "app/*:lib/*" on the
+                        classpath: with no lib/ directory the second half expands to
+                        nothing, and one complete archive is all the annotation scan
+                        needs - the very property the fat jar is built on.
+                    -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>fat-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/fat.xml</descriptor>
+                                    </descriptors>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <finalName>vaadinapp-${project.version}-fatdist</finalName>
+                                    <tarLongFileMode>posix</tarLongFileMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
