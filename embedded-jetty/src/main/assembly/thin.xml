@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The thin distribution: three directories and nothing hidden.
+
+        bin/    the start script - how this release wants to be started
+        app/    the application archive, ~9 KB
+        lib/    every dependency, one file each
+
+    maven-assembly-plugin is the right tool HERE and the wrong one for the fat
+    jar. Its predefined jar-with-dependencies descriptor unpacks everything into
+    one archive without a containerDescriptorHandler, so META-INF/services files
+    overwrite each other instead of being merged - the ServiceLoader would then
+    find one provider where the application needs all of them. Assembling a
+    directory has no such problem: nothing is merged, because nothing is
+    flattened.
+-->
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0
+                              http://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>thin</id>
+
+    <!--
+        dir     so the release can be inspected and rsynced straight from target/
+        tar.gz  so it travels as one file - which is the transport form the
+                article recommends even for the distribution that runs unpacked
+    -->
+    <formats>
+        <format>dir</format>
+        <format>tar.gz</format>
+    </formats>
+
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <baseDirectory>vaadinapp-${project.version}</baseDirectory>
+
+    <fileSets>
+        <!-- 0755: the start script has to stay executable through tar. -->
+        <fileSet>
+            <directory>${project.basedir}/src/main/dist/bin</directory>
+            <outputDirectory>bin</outputDirectory>
+            <fileMode>0755</fileMode>
+        </fileSet>
+    </fileSets>
+
+    <files>
+        <!--
+            The release carries its own version as a file. The directory name on
+            the server is a timestamp (releases sort by time and stay unique when
+            the same version ships twice), so the version needs a place inside.
+        -->
+        <file>
+            <source>${project.basedir}/src/main/dist/VERSION</source>
+            <outputDirectory>.</outputDirectory>
+            <filtered>true</filtered>
+            <fileMode>0644</fileMode>
+        </file>
+        <file>
+            <source>${project.build.directory}/${project.build.finalName}.jar</source>
+            <outputDirectory>app</outputDirectory>
+            <destName>vaadinapp.jar</destName>
+            <fileMode>0644</fileMode>
+        </file>
+    </files>
+
+    <dependencySets>
+        <!--
+            runtime scope, project artifact excluded: the application archive is
+            placed by hand above so it lands in app/ rather than in lib/. That
+            separation is the whole idea - what changes with every release sits
+            apart from what changes a few times a year.
+        -->
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <scope>runtime</scope>
+            <fileMode>0644</fileMode>
+        </dependencySet>
+    </dependencySets>
+</assembly>

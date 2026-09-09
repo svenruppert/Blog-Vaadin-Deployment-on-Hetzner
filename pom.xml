@@ -111,6 +111,13 @@
         <jcustos.version>00.83.00</jcustos.version>
 
         <!--
+            Not managed by the grandparent POM, unlike shade, jar and dependency.
+            Used only by the thin profile of embedded-jetty, but pinned here so
+            the reactor keeps one place for plugin versions.
+        -->
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+
+        <!--
             Jetty's annotation scanner reads class files with ASM. Default
             resolution mixes asm 9.8 (from j2objc-annotations) with asm-tree and
             asm-commons 9.9.1 (from Jetty); that mix crashes on Java-26 bytecode
