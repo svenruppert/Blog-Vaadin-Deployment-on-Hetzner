@@ -124,6 +124,49 @@
 
     <build>
         <plugins>
+            <!--
+                The complete bill of materials for the release.
+
+                Two generators are needed because no single one sees both worlds:
+                cyclonedx-maven-plugin knows what Maven resolved (129 components,
+                written by the reactor root), cyclonedx-npm knows the frontend
+                tree (118 components, written by the core module). They do not
+                overlap by a single package, which is exactly the problem - a
+                Maven-only BOM describes about half of a Vaadin application.
+
+                Merged here rather than at the root because the root builds first
+                in reactor order, before core has a frontend to describe. This
+                module is also the one that produces the release, and the merged
+                document belongs with it: an SBOM that stays behind in target/ on
+                a build machine answers no question that anyone actually asks.
+
+                prepare-package, so the result exists before either assembly runs
+                and can be picked up by both.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>merge-sbom</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>python3</executable>
+                            <arguments>
+                                <argument>${tools.dir}/sbom-merge.py</argument>
+                                <argument>${maven.multiModuleProjectDirectory}/target/CycloneDX-SBom.json</argument>
+                                <argument>${project.basedir}/../core/target/bom-npm.json</argument>
+                                <argument>${project.build.directory}/sbom.json</argument>
+                                <argument>${project.artifactId}-frontend</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

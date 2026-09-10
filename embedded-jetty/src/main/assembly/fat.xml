@@ -38,6 +38,19 @@
     </fileSets>
 
     <files>
+        <!--
+            The bill of materials travels with the release.
+
+            Part 4 leans on it twice - it is the only remaining answer to "which
+            version of a library is in there?" once a fat jar has merged them all.
+            An SBOM that stays in target/ on the build machine cannot answer that
+            question on the machine where it gets asked.
+        -->
+        <file>
+            <source>${project.build.directory}/sbom.json</source>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>0644</fileMode>
+        </file>
         <file>
             <source>${project.basedir}/src/main/dist/VERSION</source>
             <outputDirectory>.</outputDirectory>

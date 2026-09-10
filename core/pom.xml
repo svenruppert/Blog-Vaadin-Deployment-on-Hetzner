@@ -414,6 +414,54 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!--
+                        The npm half of the bill of materials.
+
+                        cyclonedx-maven-plugin describes what Maven resolved and
+                        cannot see npm. This application ships a frontend bundle
+                        built from npm packages, so a Maven-only BOM describes
+                        roughly half of it: measured here, 129 Maven components
+                        against 118 npm components, with no overlap whatsoever.
+
+                        Bound after build-frontend, because Vaadin writes
+                        package.json during prepare-frontend and installs the tree
+                        during the frontend build - before that there is nothing to
+                        read. Dev dependencies are omitted; what remains is what
+                        went into the bundle.
+
+                        The reactor root merges this with the Maven BOM; see
+                        tools/sbom-merge.py and the embedded-jetty module.
+                    -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>npm-sbom</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>npx</executable>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                    <arguments>
+                                        <argument>--yes</argument>
+                                        <argument>@cyclonedx/cyclonedx-npm@${cyclonedx-npm.version}</argument>
+                                        <argument>--output-format</argument>
+                                        <argument>JSON</argument>
+                                        <argument>--output-file</argument>
+                                        <argument>${project.build.directory}/bom-npm.json</argument>
+                                        <argument>--omit</argument>
+                                        <argument>dev</argument>
+                                        <argument>--spec-version</argument>
+                                        <argument>1.6</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

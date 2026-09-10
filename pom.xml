@@ -118,6 +118,12 @@
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
 
         <!--
+            Pinned rather than floating: the npm BOM is evidence about a release,
+            and evidence produced by an unpinned tool is worth less.
+        -->
+        <cyclonedx-npm.version>6.0.1</cyclonedx-npm.version>
+
+        <!--
             Jetty's annotation scanner reads class files with ASM. Default
             resolution mixes asm 9.8 (from j2objc-annotations) with asm-tree and
             asm-commons 9.9.1 (from Jetty); that mix crashes on Java-26 bytecode
