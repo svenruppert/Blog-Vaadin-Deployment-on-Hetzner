@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.svenruppert.flow.security.credentials.ApiTokenSource;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
@@ -88,6 +89,8 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
   private static final String K_C_ANNO_B = "security.card.annotations.body";
   private static final String K_C_DRIFT_T = "security.card.drift.title";
   private static final String K_C_DRIFT_B = "security.card.drift.body";
+  private static final String K_C_CRED_T = "security.card.credentials.title";
+  private static final String K_C_CRED_B = "security.card.credentials.body";
   private static final String K_C_PROP_T = "security.card.propagation.title";
   private static final String K_C_PROP_B = "security.card.propagation.body";
   private static final String K_C_AUDIT_T = "security.card.audit.title";
@@ -117,6 +120,7 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
         tr(K_S_IDENTITY_TITLE, "Identity & credentials"),
         tr(K_S_IDENTITY_SUB,
             "How the application proves a visitor is who they claim to be."),
+        credentialCard(),
         new FeatureCard(VaadinIcon.KEY,
             tr(K_C_ARGON_T, "Argon2id hashing"),
             tr(K_C_ARGON_B,
@@ -360,4 +364,38 @@ public class SecurityFeaturesView extends Composite<VerticalLayout>
     footer.add(lead, link);
     return footer;
   }
+  /**
+   * Shows that the API token arrived — and nothing more.
+   *
+   * <p>The reference server hands the token over through systemd credentials,
+   * which keeps it out of the unit file, out of the environment and out of
+   * {@code ps aux}. Proving where a secret is <em>not</em> is only half the
+   * argument; this card is the other half, showing that it nevertheless
+   * reaches the application.
+   *
+   * <p>Origin, length and a four-byte fingerprint. <strong>Never the
+   * value</strong> — a screenshot of it in an article would demonstrate exactly
+   * the mistake the mechanism exists to prevent.
+   */
+  private FeatureCard credentialCard() {
+    ApiTokenSource.Status status = ApiTokenSource.resolve().status();
+    String body = status.present()
+        ? tr(K_C_CRED_B,
+            "Loaded from {0}. Length {1}, fingerprint {2}. The value itself is "
+                + "never logged and never displayed.",
+            switch (status.origin()) {
+              case SYSTEMD_CREDENTIAL -> "systemd credentials";
+              case SYSTEM_PROPERTY -> "the system property";
+              case ENVIRONMENT -> "the environment";
+              case ABSENT -> "nowhere";
+            },
+            String.valueOf(status.length()),
+            status.fingerprint())
+        : tr(K_C_CRED_B + ".absent",
+            "No API token configured. On the reference server it arrives through "
+                + "LoadCredentialEncrypted; locally either app.api.token or "
+                + "APP_API_TOKEN would supply one.");
+    return new FeatureCard(VaadinIcon.SAFE, tr(K_C_CRED_T, "API token from systemd credentials"), body);
+  }
+
 }

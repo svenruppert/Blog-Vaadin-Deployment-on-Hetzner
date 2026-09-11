@@ -17,6 +17,10 @@
 package com.svenruppert.flow.security.storage;
 
 import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Single source of truth for the application's on-disk storage paths.
@@ -48,16 +52,52 @@ public final class AppStoragePaths {
   /** System-property name for the storage base directory. */
   public static final String PROPERTY = "app.storage.dir";
 
+  /** Environment variable read when the system property is not set. */
+  public static final String ENV = "APP_STORAGE_DIR";
+
   /** Built-in default when nothing was configured. */
   public static final String DEFAULT = "./data";
+
+  private static final Logger LOG = LoggerFactory.getLogger(AppStoragePaths.class);
 
   private AppStoragePaths() {
   }
 
-  /** Base directory for all app-owned storage. */
+  /**
+   * Base directory for all app-owned storage.
+   *
+   * <p>Resolved from the system property first, then the environment variable,
+   * then the built-in default. Reading only the property was the earlier
+   * behaviour and it failed quietly: in containers and most orchestrators the
+   * environment variable is the usual way to configure a path, and an ignored
+   * setting does not produce an error - it produces {@code ./data} relative to
+   * whatever the working directory happens to be. The application then finds an
+   * empty store where its data should have been, which looks like data loss.
+   *
+   * <p>The resolved origin is logged once, because that is the case somebody
+   * needs to see before they start wondering.
+   */
   public static Path baseDir() {
-    return Path.of(System.getProperty(PROPERTY, DEFAULT));
+    String fromProperty = System.getProperty(PROPERTY);
+    if (fromProperty != null && !fromProperty.isBlank()) {
+      return logged(fromProperty, "system property " + PROPERTY);
+    }
+    String fromEnv = System.getenv(ENV);
+    if (fromEnv != null && !fromEnv.isBlank()) {
+      return logged(fromEnv, "environment " + ENV);
+    }
+    return logged(DEFAULT, "default - no property, no environment");
   }
+
+  private static Path logged(String value, String origin) {
+    Path path = Path.of(value);
+    if (ORIGIN_LOGGED.compareAndSet(false, true)) {
+      LOG.info("storage base dir: {} ({})", path.toAbsolutePath(), origin);
+    }
+    return path;
+  }
+
+  private static final AtomicBoolean ORIGIN_LOGGED = new AtomicBoolean();
 
   /**
    * Anchor directory for the bootstrap token file. Independent of the

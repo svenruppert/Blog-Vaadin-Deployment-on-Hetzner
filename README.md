@@ -62,6 +62,41 @@ The production build produces **`war-jetty/target/ROOT.war`** — the artifact n
 the server expects under `/opt/vaadinapp/webapps/`, so no renaming step
 sits between build and deployment.
 
+## Runtime requirements
+
+The application needs two JVM options wherever it runs:
+
+```
+--add-exports java.base/jdk.internal.misc=ALL-UNNAMED
+--enable-native-access=ALL-UNNAMED
+```
+
+EclipseStore reaches into JDK internals, and on JDK 26 that is refused without
+the first flag; the second silences the restricted-method warning for the same
+access.
+
+**They are properties of the application, not of the build.** Both are listed in
+`.mvn/jvm.config`, which configures the *Maven* JVM - it applies while building
+and while running tests, and it does not travel with the artifact. Deploy the
+WAR or the distribution without adding the flags to the service definition and
+the storage layer fails on first write:
+
+```
+java.lang.Error: Could not obtain access to "jdk.internal.misc.Unsafe",
+please start the VM with --add-exports java.base/jdk.internal.misc=ALL-UNNAMED
+```
+
+That failure is unpleasant because of where it lands: the initial administrator
+setup reports success, a second attempt is refused as "already initialised", and
+the account cannot be signed in to. Nothing was written.
+
+The thin distribution carries both flags in `bin/start.sh`, so a release brings
+them along. Anyone building their own service definition has to add them.
+
+Storage location is configured with `app.storage.dir` or `APP_STORAGE_DIR`;
+without either the application writes to `./data` relative to the working
+directory, and logs once which of the three it resolved.
+
 ## Deployment target
 
 Part 1 puts the WAR into this shape on the server:

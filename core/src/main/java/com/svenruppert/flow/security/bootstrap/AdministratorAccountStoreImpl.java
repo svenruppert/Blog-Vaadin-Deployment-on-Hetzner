@@ -63,7 +63,10 @@ public final class AdministratorAccountStoreImpl
         idSequence.getAndIncrement(),
         displayName,
         EnumSet.of(AuthorizationRole.ADMIN, AuthorizationRole.USER));
-    logger().info("Persisting initial administrator: username='{}', id={}, displayName='{}', roles={}",
+    // "Attempting", not "Persisting". The earlier wording was written before the
+    // write and read afterwards as if the write had happened - which is exactly
+    // how a failed setup came to look like a successful one in the journal.
+    logger().info("Attempting to persist initial administrator: username='{}', id={}, displayName='{}', roles={}",
         newAdministrator.username(), user.id(), displayName, user.roles());
     try {
       directory.registerWithHashedPassword(
@@ -72,10 +75,23 @@ public final class AdministratorAccountStoreImpl
           user);
       logger().info("Initial administrator '{}' (id={}) committed to {}",
           newAdministrator.username(), user.id(), directory.getClass().getSimpleName());
-    } catch (RuntimeException failure) {
-      // InitialAdminBootstrapService swallows this exception and surfaces a
-      // generic "could not persist administrator" — log the real cause first.
-      logger().error("Failed to persist initial administrator '{}' (id={})",
+    } catch (Throwable failure) {
+      // Throwable rather than RuntimeException on purpose. The failure that
+      // prompted this was a java.lang.Error:
+      //
+      //   Could not obtain access to "jdk.internal.misc.Unsafe", please start
+      //   the VM with --add-exports java.base/jdk.internal.misc=ALL-UNNAMED
+      //
+      // EclipseStore needs that flag on JDK 26. It is set for the Maven JVM in
+      // .mvn/jvm.config, which does not travel with the artifact - so the write
+      // failed only once the application was deployed. An Error slipped past a
+      // RuntimeException catch, nothing was logged here, and the caller carried
+      // on as though the administrator existed.
+      logger().error("Failed to persist initial administrator '{}' (id={}). "
+              + "If this is an Error about jdk.internal.misc.Unsafe, the JVM is "
+              + "missing --add-exports java.base/jdk.internal.misc=ALL-UNNAMED "
+              + "and --enable-native-access=ALL-UNNAMED; see the runtime "
+              + "requirements in README.md.",
           newAdministrator.username(), user.id(), failure);
       throw failure;
     }

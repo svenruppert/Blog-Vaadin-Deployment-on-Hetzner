@@ -83,6 +83,7 @@ public class SetupView extends Composite<Div>
   private static final String K_ALREADY = "setup.alreadyInitialized";
   private static final String K_E_USERNAME = "setup.error.invalidUsername";
   private static final String K_E_POLICY = "setup.error.policyViolation";
+  private static final String K_E_FAILED = "setup.error.failed";
   private static final String K_E_INTERNAL = "setup.error.internal";
 
   private final PasswordField tokenField = new PasswordField();
@@ -200,11 +201,30 @@ public class SetupView extends Composite<Div>
 
     // ── Server-side bootstrap call ─────────────────────────────────
     logger().info("Calling InitialAdminBootstrapService.createInitialAdmin for username='{}'", username);
-    InitialAdminCreationResult result = BootstrapWiring.instance().bootstrapService()
-        .createInitialAdmin(new CreateInitialAdminCommand(
-            token, username, password.toCharArray(),
-            blankToNull(displayNameField.getValue()),
-            blankToNull(emailField.getValue())));
+    InitialAdminCreationResult result;
+    try {
+      result = BootstrapWiring.instance().bootstrapService()
+          .createInitialAdmin(new CreateInitialAdminCommand(
+              token, username, password.toCharArray(),
+              blankToNull(displayNameField.getValue()),
+              blankToNull(emailField.getValue())));
+    } catch (Throwable failure) {
+      // Catching Throwable here is deliberate. A missing JVM flag surfaces as a
+      // java.lang.Error from deep inside the storage layer; without this the
+      // exception reaches Vaadin's default error handler, the user is shown a
+      // generic error page, and nothing says what went wrong. Worse, the store
+      // may have been left believing an administrator exists, so the next
+      // attempt is refused and the account cannot be signed in to - which is
+      // precisely what happened on the reference server.
+      logger().error("Initial administrator setup failed for username='{}'. "
+              + "The account was NOT created; setup can be retried once the "
+              + "cause is fixed.", username, failure);
+      warn(tr(K_E_FAILED,
+          "Setup failed — the administrator was not created. "
+          + "Check the server log; the account can be created again once the "
+          + "cause is resolved."));
+      return;
+    }
     tokenField.clear();
     passwordField.clear();
     confirmField.clear();
