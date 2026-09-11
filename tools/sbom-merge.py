@@ -88,7 +88,37 @@ def main(argv):
     if npm_root:
         npm_root = json.loads(json.dumps(npm_root))
         npm_root["name"] = root_name
-        npm_root.setdefault("type", "application")
+        npm_root["type"] = "application"
+        # This node is an aggregate this script invents so the npm subtree has
+        # somewhere to hang; it is not a package anyone can install. Leaving the
+        # npm root's purl on it would claim a package called "no-name" exists,
+        # and leaving its licence would put a spurious UNLICENSED entry into the
+        # licence statistics of every report built from this document.
+        npm_root.pop("purl", None)
+        npm_root.pop("licenses", None)
+        npm_root.pop("externalReferences", None)
+        # The bom-ref travels into every report, so it gets the same treatment as
+        # the name. Renaming it means rewriting the references that point at it.
+        old_ref = npm_root.get("bom-ref")
+        if old_ref:
+            npm_root["bom-ref"] = root_name
+            # cyclonedx-npm prefixes every reference with the root package name,
+            # so all 118 npm refs read "no-name|@vaadin/grid@25.2.7". Renaming
+            # only the root would leave that prefix everywhere; the prefix is
+            # rewritten too, on the components and on both sides of every edge.
+            def rename(ref):
+                if ref == old_ref:
+                    return root_name
+                prefix = f"{old_ref}|"
+                return root_name + "|" + ref[len(prefix):] if ref.startswith(prefix) else ref
+
+            for component in npm.get("components", []):
+                if component.get("bom-ref"):
+                    component["bom-ref"] = rename(component["bom-ref"])
+            for entry in npm.get("dependencies", []):
+                if entry.get("ref"):
+                    entry["ref"] = rename(entry["ref"])
+                entry["dependsOn"] = [rename(r) for r in entry.get("dependsOn", [])]
         merged.setdefault("components", []).append(npm_root)
 
     merged.setdefault("components", []).extend(npm.get("components", []))
