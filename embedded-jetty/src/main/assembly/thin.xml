@@ -40,6 +40,25 @@
             <outputDirectory>bin</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
+
+        <!--
+            The Java runtime, when one has been built into target/ beforehand.
+            tools/jlink-runtime.sh puts it there; bin/start.sh prefers it over
+            JAVA_HOME.
+
+            The Maven build never produces it: a jlink image is built for one
+            platform, so building it here would ship a developer machine's
+            runtime to a Linux server. It is built where it will run - on the
+            target, or on a build host of the same platform - and this fileSet
+            picks it up if it is there. Missing directories are skipped, so a
+            plain build is unaffected.
+        -->
+        <fileSet>
+            <directory>${project.build.directory}/jlink-runtime</directory>
+            <outputDirectory>runtime</outputDirectory>
+            <fileMode>0644</fileMode>
+            <directoryMode>0755</directoryMode>
+        </fileSet>
     </fileSets>
 
     <files>
