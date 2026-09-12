@@ -34,9 +34,19 @@ set -eu
 # set in the caller's environment would make cd print and pick a wrong directory.
 APP_HOME=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 
-# JAVA_HOME wins when set; otherwise whatever java is on PATH.
-JAVA_BIN=${JAVA_HOME:+$JAVA_HOME/bin/java}
-JAVA_BIN=${JAVA_BIN:-java}
+# A runtime shipped inside the release wins over everything else. That is the
+# last thing this series moves inside the dashed line: first the server, then
+# the packaging, now the Java runtime itself. A release that carries one no
+# longer cares what is installed on the host - and the same unit still starts a
+# release that does not, because the check is for a file, not a setting.
+#
+# Order: bundled runtime, then JAVA_HOME, then whatever is on PATH.
+if [ -x "$APP_HOME/runtime/bin/java" ]; then
+  JAVA_BIN="$APP_HOME/runtime/bin/java"
+else
+  JAVA_BIN=${JAVA_HOME:+$JAVA_HOME/bin/java}
+  JAVA_BIN=${JAVA_BIN:-java}
+fi
 
 # Properties of THIS build, not of the host:
 #   --add-exports          EclipseStore reaches into jdk.internal.misc
