@@ -61,6 +61,30 @@
 
     <build>
         <!--
+            The archive has to be called ROOT.war - Jetty derives the context
+            path from the archive name, and only ROOT.war is served at /. The
+            name comes from the warName property in the root POM, which stays
+            the single place where it is written down.
+
+            It is applied through finalName and not through the war plugin's
+            warName parameter, because that parameter is read-only:
+
+              Mojo war:war (org.apache.maven.plugins.war.WarMojo)
+                - Parameter 'warName' is read-only, must not be used in configuration
+
+            Today Maven only warns and the name still comes out right; a later
+            plugin version will reject it, and the archive would silently become
+            vaadinapp-war-jetty-<version>.war - served at a path Caddy does not
+            proxy. warName is derived from finalName anyway, so setting the
+            latter produces the same archive by the supported route.
+
+            The side effect is that the other artifacts of this module are
+            renamed in target/ as well: the (empty) test jar becomes
+            ROOT-tests.jar. Repository names are driven by the coordinates and
+            stay as they were.
+        -->
+        <finalName>${warName}</finalName>
+        <!--
             run-war rather than run: this module has no sources of its own, so
             the in-place runner would serve an empty context. run-war starts the
             packaged archive and therefore reflects what actually ships.
@@ -72,7 +96,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <warName>${warName}</warName>
                 </configuration>
             </plugin>
 
