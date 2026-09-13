@@ -6,7 +6,7 @@ Hetzner. This repository is the code side of the series; the articles
 themselves are published separately.
 
 It is not a starter kit. It is one concrete application, carried through
-five parts, while the boundary between *application* and *environment*
+seven parts, while the boundary between *application* and *environment*
 moves outward with every part.
 
 ## Where the series stands
@@ -14,24 +14,34 @@ moves outward with every part.
 | Part | Topic | Boundary |
 |---|---|---|
 | 0 | Preparing a Hetzner Debian server | no application yet |
-| 1 | Vaadin as a WAR on Jetty behind Caddy | the application **is** the WAR |
-| 2 | Embedded Jetty — the server becomes part of the application | Jetty moves in |
-| 3 | Vaadin Boot instead of a hand-written Jetty bootstrap | startup moves in |
-| 4 | Fat JAR or thin distribution? | packaging changes |
-| 5 | Self-contained Vaadin with jlink | the JVM moves in |
+| 1 | From the Vaadin project to a systemd service | the application **is** the WAR |
+| 2 | Publicly reachable, with Caddy and HTTPS | the environment gains a reverse proxy |
+| 3 | Embedded Jetty — the server becomes part of the application | Jetty moves in |
+| 4 | Fat JAR and thin distribution: building both forms | packaging changes |
+| 5 | Delivering, switching, comparing | releases and rollback |
+| 6 | Self-contained Vaadin with jlink | the JVM moves in |
 
 ## Checking out the code for one part
 
-Each part is tagged, so the exact state an article describes stays
-reproducible — and the diff between two tags shows what a part actually
-changed:
+**Tags mark code states, not article numbers.** A part gets its own tag
+only where its code differs from the previous one; where two parts share
+a state, both articles point at the same tag. Part 0 sets up the server
+and never touches this repository, so it has no tag at all.
+
+| Tag | Parts it covers | State |
+|---|---|---|
+| `teil-02` | 1 and 2 | single Maven module, build produces `target/ROOT.war` |
+| `teil-03` | 3 | Maven reactor, one module per delivery form |
+| `teil-04` | 4 and 5 | both packaging forms, releases and rollback |
+| `teil-06` | 6 | thin distribution carrying its own jlink runtime image |
 
 ```bash
-git checkout teil-01      # the state Part 1 deploys
-git diff teil-01 teil-02  # what "Jetty moves into the application" means in code
+git checkout teil-02      # the state parts 1 and 2 describe
+git diff teil-02 teil-03  # what "the reactor splits the module" means in code
 ```
 
-The project version follows the same scheme: `00.0N.00` for part N.
+The project version stays at `00.01.00` — the tags carry the mapping to
+the articles, so nothing depends on a version that moves per part.
 
 ## Quick start
 

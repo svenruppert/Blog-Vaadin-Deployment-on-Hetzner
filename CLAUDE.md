@@ -16,7 +16,16 @@ Remotes: `origin` is Forgejo (`git.jsentinel.eu/sven.ruppert/Blog-Vaadin-Deploym
 
 `artifactId vaadinapp`, starting version `00.01.00`. The name matches the server side: the series deploys the service as `vaadinapp` (`/opt/vaadinapp`, `vaadinapp.service`, service account `vaadinapp`), and `<warName>ROOT</warName>` makes the build emit `war-jetty/target/ROOT.war` directly — the name Jetty serves from `/opt/vaadinapp/webapps/`, so no renaming step sits between build and deployment.
 
-Version scheme: `00.0N.00` for part N of the series, plus a git tag `teil-0N`, so a reader can check out the exact state an article describes and `git diff teil-01 teil-02` shows what a part changed in code.
+**Tags mark code states, not article numbers.** A part gets its own tag only where its code differs from the previous part's; where two parts share a state, both articles point at the same tag. Part 0 sets up the server and never touches this repository, so it has no tag.
+
+| Tag | Parts | State |
+|---|---|---|
+| `teil-02` | 1 and 2 | single Maven module, build produces `target/ROOT.war` |
+| `teil-03` | 3 | Maven reactor, one module per delivery form |
+| `teil-04` | 4 and 5 | both packaging forms, releases and rollback |
+| `teil-06` | 6 | thin distribution carrying its own jlink runtime image |
+
+Each article names its tag in its opening chapter, and those names are the contract — do not invent a tag for a part that shares its state with the previous one. The project version stays at `00.01.00`: the tags carry the mapping, so nothing depends on a version that moves per part.
 
 The application's brand identity — name, tagline, icon, CSS class names — lives in a single file: `views/ui/AppBrand.java`. The Java package names (`com.svenruppert.flow`) carry no template reference and stay as they are.
 
